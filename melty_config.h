@@ -16,7 +16,7 @@
 //Lesser values cause greater change (greater values cause lesser change)
 #define LEFT_RIGHT_HEADING_CONTROL_DIVISOR 2
 
-#define ACCEL_MOUNT_RADIUS_CM 3.5
+#define ACCEL_MOUNT_RADIUS_CM 4.0
 #define LED_OFFSET_PERCENT 44   //adjust to make heading LED line up with direction robot travels
 
 //full power spin in below this number
