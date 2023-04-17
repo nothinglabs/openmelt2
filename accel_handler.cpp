@@ -14,7 +14,6 @@
 #include <Wire.h>
 #include "SparkFun_LIS331.h"
 
-
 LIS331 xl;
 
 void init_accel() {

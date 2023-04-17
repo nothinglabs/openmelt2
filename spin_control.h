@@ -6,6 +6,16 @@ void heading_led_on();
  
 void heading_led_off();
 
+int get_max_rpm();
+
+void toggle_config_mode();
+
+int get_config_mode();
+
+void load_melty_config_settings();
+
+void save_melty_config_settings();
+
 //holds melty parameters used to determine timing for current spin cycle
 //all time offsets are in microseconds
 typedef struct melty_parameters_t {

@@ -98,6 +98,11 @@ int rc_get_throttle_percent() {
   return (int)throttle_percent;
 }
 
+int rc_get_is_lr_in_config_deadzone() {
+  if (abs(rc_get_leftright()) < LR_CONFIG_MODE_DEADZONE_WIDTH) return RC_LR_IN_CONFIG_DEADZONE;
+  return RC_LR_NOT_IN_CONFIG_DEADZONE;
+}
+
 //returns RC_FORBACK_FORWARD, RC_FORBACK_BACKWARD or RC_FORBACK_NEUTRAL based on stick position
 int rc_get_forback() {
   int rc_forback_offset = forback_rc_channel.pulse_length - CENTER_FORBACK_PULSE_LENGTH;

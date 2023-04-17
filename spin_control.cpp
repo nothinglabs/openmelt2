@@ -1,5 +1,6 @@
 //this module handles calculation and timing loop for translational drift
 //also interfaces directly with the heading LED
+//Direction of rotation assumed to be CLOCKWISE (but should work counter-clockwise)
 
 #include "arduino.h"
 #include "melty_config.h"
@@ -7,8 +8,45 @@
 #include "rc_handler.h"
 #include "spin_control.h"
 #include "accel_handler.h"
+#include "config_storage.h"
 
-static const struct device *dev;
+static unsigned long shortest_rotation_interval_us = 0;
+
+static int config_mode = false;
+
+float accel_mount_radius_cm = DEFAULT_ACCEL_MOUNT_RADIUS_CM;
+float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;
+
+void load_melty_config_settings() {
+#ifdef ENABLE_EEPROM_STORAGE 
+  accel_mount_radius_cm = load_accel_mount_radius();
+  led_offset_percent = load_heading_led_offset();
+#endif  
+}
+
+void save_melty_config_settings() {
+#ifdef ENABLE_EEPROM_STORAGE 
+  save_settings_to_eeprom(led_offset_percent, accel_mount_radius_cm);
+#endif  
+}
+
+
+void update_shortest_rotation_internval(unsigned long rotation_interval_us) {
+  if (rotation_interval_us < shortest_rotation_interval_us || shortest_rotation_interval_us == 0) shortest_rotation_interval_us = rotation_interval_us;
+}
+
+void toggle_config_mode() {
+  config_mode = !config_mode;
+}
+
+int get_config_mode() {
+  return config_mode;
+}
+
+int get_max_rpm() {
+  if (shortest_rotation_interval_us == 0) return 0;
+  return (1.0f / (shortest_rotation_interval_us / 1000000.0f)) * 60.0f;
+}
 
 void init_melty(void) {
   pinMode(HEADING_LED_PIN, OUTPUT);
@@ -22,24 +60,49 @@ void heading_led_off() {
   digitalWrite(HEADING_LED_PIN, LOW);
 }
 
+void update_radius_for_config_mode() {
+//only adjust if stick is outside deadzone
+  if (rc_get_is_lr_in_config_deadzone() == RC_LR_IN_CONFIG_DEADZONE) return;
+
+  float adjustment_factor = (accel_mount_radius_cm * (float)(rc_get_leftright() / (float)NOMINAL_PULSE_RANGE));
+  adjustment_factor = adjustment_factor / LEFT_RIGHT_CONFIG_RADIUS_ADJUST_DIVISOR;
+  accel_mount_radius_cm = accel_mount_radius_cm + adjustment_factor;
+}
+
+void update_heading_led_offset_for_config_mode() {
+//only adjust if stick is outside deadzone  
+  if (rc_get_is_lr_in_config_deadzone() == RC_LR_IN_CONFIG_DEADZONE) return;
+
+  float adjustment_factor = (accel_mount_radius_cm * (float)(rc_get_leftright() / (float)NOMINAL_PULSE_RANGE));
+  adjustment_factor = adjustment_factor / LEFT_RIGHT_CONFIG_LED_ADJUST_DIVISOR;
+  led_offset_percent = led_offset_percent + adjustment_factor;
+
+  if (led_offset_percent > 100) led_offset_percent = 0;
+  if (led_offset_percent < 0) led_offset_percent = 100;
+
+}
+
 
 //calculates time for this rotation of robot
 //is increased / decreased by a factor relative to RC left / right position
 //by having the rotation time intentionally run slighty short or long - heading of robot is effectively changed
-static float get_rotation_interval_ms(void) {
-
-  //increasing causes tracking speed to decrease
-  float radius_in_cm = ACCEL_MOUNT_RADIUS_CM;
+static float get_rotation_interval_ms(int steering_disabled) {
   
-  //TODO: implement this... removed for testing
-  //This approach didn't work as expected - may be a bug - or maybe just need to change constants
-  //float radius_adjustment_factor = (rc_get_leftright() / NOMINAL_PULSE_RANGE) / LEFT_RIGHT_HEADING_CONTROL_DIVISOR;
-  //radius_in_cm = radius_in_cm + (radius_in_cm * radius_adjustment_factor);
+  float radius_adjustment_factor = 0;
+
+  //allows for disabling of steering when in config mode
+  if (steering_disabled == 0) {
+    radius_adjustment_factor = (float)(rc_get_leftright() / (float)NOMINAL_PULSE_RANGE) / LEFT_RIGHT_HEADING_CONTROL_DIVISOR;
+  }
+  
+  float effective_radius_in_cm = accel_mount_radius_cm;
+  
+  effective_radius_in_cm = effective_radius_in_cm + (effective_radius_in_cm * radius_adjustment_factor);
 
   //calculate RPM from g's - derived from "G = 0.00001118 * r * RPM^2"
   float rpm;
   rpm = get_accel_force_g() * 89445.0f;
-  rpm = rpm / radius_in_cm;
+  rpm = rpm / effective_radius_in_cm;
   rpm = sqrt(rpm);
 
   float rotation_interval = (1.0f / rpm) * 60 * 1000;
@@ -53,7 +116,7 @@ static float get_rotation_interval_ms(void) {
 //This entire section takes ~1300us on an Atmega32u4 (acceptable)
 static struct melty_parameters_t get_melty_parameters(void) {
 
-  float led_offset_portion = LED_OFFSET_PERCENT / 100.0f;
+  float led_offset_portion = led_offset_percent / 100.0f;
   float motor_on_portion = rc_get_throttle_percent() / 100.0f;
   float led_on_portion = .4f * (1.1f - motor_on_portion);  //LED width changed with throttle
 
@@ -61,10 +124,30 @@ static struct melty_parameters_t get_melty_parameters(void) {
 
   melty_parameters.translate_forback = rc_get_forback();
   
-  //TODO: THIS IS JUST TESTING!
-  melty_parameters.rotation_interval_us = get_rotation_interval_ms() * 1000;
-  melty_parameters.rotation_interval_us = melty_parameters.rotation_interval_us + rc_get_leftright() * 80;
+  int steering_disabled = 0;
+  
+  //in config mode:
+  //if forback neutral - then do radius adjustment
+  //if forback backward - do LED heading adjustment (don't translate)
+  //if forback forward - normal drive (testing)
 
+  if (get_config_mode() == 1) {
+      if (melty_parameters.translate_forback == RC_FORBACK_NEUTRAL) {
+        update_radius_for_config_mode();
+        steering_disabled = 1;
+      }
+      
+      if (melty_parameters.translate_forback == RC_FORBACK_BACKWARD) {
+        melty_parameters.translate_forback = RC_FORBACK_NEUTRAL;
+        update_heading_led_offset_for_config_mode();
+        steering_disabled = 1;
+      }
+  } 
+  
+  melty_parameters.rotation_interval_us = get_rotation_interval_ms(steering_disabled) * 1000;
+
+  update_shortest_rotation_internval(melty_parameters.rotation_interval_us);
+  
   //if under defined RPM - just try to spin up
   if (melty_parameters.rotation_interval_us > MAX_TRANSLATION_ROTATION_INTERVAL_US) motor_on_portion = 1;
 

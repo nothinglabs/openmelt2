@@ -25,7 +25,11 @@
 //if pulse length must differ by at least this much
 //from CENTER_FORBACK_PULSE_LENGTH to be considered
 //going forward or back
-#define FORBACK_MIN_THRESH_PULSE_LENGTH 80
+#define FORBACK_MIN_THRESH_PULSE_LENGTH 100
+
+//deadzone for LR when in config mode (in US)
+//(for actual translation control - there is no deadzone to allow for trim adjustment)
+#define LR_CONFIG_MODE_DEADZONE_WIDTH 100
 
 #define RC_FORBACK_FORWARD 1
 #define RC_FORBACK_NEUTRAL 0
@@ -34,14 +38,19 @@
 #define RC_SIGNAL_GOOD 1
 #define RC_SIGNAL_BAD 0
 
-//if we don't get a valid RC update on the throttle at least this often - spin down
-#define MAX_US_BETWEEN_RC_UPDATES 100000
+#define RC_LR_IN_CONFIG_DEADZONE 1
+#define RC_LR_NOT_IN_CONFIG_DEADZONE 0
 
-void init_rc(void);
+//if we don't get a valid RC update on the throttle at least this often - spin down
+#define MAX_US_BETWEEN_RC_UPDATES 200000
+
+void init_rc();
 int rc_signal_is_healthy();
 int rc_get_throttle_percent();
 int rc_get_forback();
 int rc_get_leftright();
+
+int rc_get_is_lr_in_config_deadzone();
 
 void lock_rc_data();
 void unlock_rc_data();
