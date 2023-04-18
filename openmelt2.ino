@@ -95,7 +95,7 @@ void check_config_mode() {
 
 
 void loop() {
-
+  
 //if the rc signal isn't good - keep motors off - and cycle slow LED pulse
   while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
     motors_off();
@@ -114,7 +114,7 @@ void loop() {
     
     //otherwise - assure motors are off
     motors_off();
-
+    
     //"fast" idle flash - indicates RC signal is good while sitting idle
     delay(20);
     heading_led_on(0);

@@ -9,6 +9,10 @@
 //Set to correspond to ACCEL_RANGE
 #define ACCEL_MAX_SCALE 400
 
+//Change as needed as needed
+//(Adafuit breakout default is 0x18, Sparkfun default is 0x19)
+#define ACCEL_I2C_ADDRESS 0x18
+
 void init_accel();
 
 float get_accel_force_g();

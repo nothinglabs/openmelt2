@@ -14,7 +14,7 @@ struct rc_channel_t {
   int pin;                        //pin channel is connected to
   unsigned long pulse_length;     //most recent pulse length in us
   unsigned long pulse_start_time; //time stamp of when RC pin last went high
-  unsigned long last_good_signal; //time stamp of when last pulse of valid length was received
+  unsigned long last_good_signal; //time stamp (MS) of when last pulse of valid length was received
 };
 
 struct rc_channel_t forback_rc_channel = {
@@ -69,19 +69,21 @@ void update_rc_channel(struct rc_channel_t *rc_channel) {
       unsigned long new_pulse_length = micros() - rc_channel->pulse_start_time;
       if (new_pulse_length <= MAX_RC_PULSE_LENGTH && new_pulse_length >= MIN_RC_PULSE_LENGTH) {
         rc_channel->pulse_length = new_pulse_length;
-        rc_channel->last_good_signal = micros();
+        rc_channel->last_good_signal = millis();
       }
     }
   }
 }
 
-//verifies all RC channels have returned values more
-//recent that MAX_US_BETWEEN_RC_UPDATES
+//verifies RC channels have returned values more
+//recent that MAX_MS_BETWEEN_RC_UPDATES
 int rc_signal_is_healthy() {
   
-  if (micros() - throttle_rc_channel.last_good_signal > MAX_US_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
-  if (micros() - leftright_rc_channel.last_good_signal > MAX_US_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
-  if (micros() - forback_rc_channel.last_good_signal > MAX_US_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
+  if (millis() - throttle_rc_channel.last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
+  
+  //just verifiying throttle OK
+  //if (micros() - leftright_rc_channel.last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
+  //if (micros() - forback_rc_channel.last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
 
   return RC_SIGNAL_GOOD;
 }
