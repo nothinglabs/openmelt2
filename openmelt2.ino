@@ -4,29 +4,38 @@
 #include "accel_handler.h"
 #include "spin_control.h"
 #include "config_storage.h"
+#include "led_driver.h"
+#include "battery_monitor.h"
 
 //#define JUST_DO_DIAGNOSTIC_LOOP
 
 void setup() {
+  
+  Serial.begin(115200);
 
   init_rc();
   init_accel();
   init_motors();
-  init_melty();
-
-  Serial.begin(115200);
+  init_led();
 
   //do a little pulse at boot-up to make it clear we booted
-  for (int x = 0; x < 30; x++) {
+  
+  for (int x = 0; x < 4; x++) {
     heading_led_on(0);
-    delay(10);
+    delay(300);
     heading_led_off();
-    delay(20);
+    delay(300);
   }
-
+  
 //load settings on boot
  #ifdef ENABLE_EEPROM_STORAGE  
   load_melty_config_settings();
+#endif
+
+#ifdef JUST_DO_DIAGNOSTIC_LOOP
+  while (1) {
+    diagnostic_loop();
+  }
 #endif
 
 }
@@ -34,9 +43,7 @@ void setup() {
 //dumps out diagnostics info
 void diagnostic_loop() {
 
-  float battery_voltage = (analogRead(BATTERY_ADC_PIN) * (ARDUINIO_VOLTAGE / 1023.0)) * VOLTAGE_DIVIDER;
-
-  Serial.print(battery_voltage);
+  Serial.print(get_battery_voltage());
   Serial.print(", ");
   
 #ifdef ENABLE_EEPROM_STORAGE  
@@ -59,13 +66,35 @@ void diagnostic_loop() {
   Serial.println(get_max_rpm());
 }
 
-void loop() {
-
-#ifdef JUST_DO_DIAGNOSTIC_LOOP
-  while (1) {
-    diagnostic_loop();
+void display_rpm_if_requested() {
+//if user pushes control stick up / holds for 750ms - flashes out top speed (100's of RPMs)
+  if (rc_get_forback() == RC_FORBACK_FORWARD) {
+    delay(750);
+    if (rc_get_forback() == RC_FORBACK_FORWARD) {
+      for (int x = 0; x < get_max_rpm(); x = x + 100) {
+        delay(600);
+        heading_led_on(0);
+        delay(20);
+        heading_led_off();
+      }
+      delay(1200);
+    }
   }
-#endif
+}
+
+void check_config_mode() {
+  //if user pulls control stick back for 750ms - enters interactive configuration mode
+  if (rc_get_forback() == RC_FORBACK_BACKWARD) {
+    delay(750);
+    if (rc_get_forback() == RC_FORBACK_BACKWARD) {
+      toggle_config_mode(); 
+      if (get_config_mode() == 0) save_melty_config_settings();    //save melty settings on config mode exit
+    }
+  }    
+}
+
+
+void loop() {
 
 //if the rc signal isn't good - keep motors off - and cycle slow LED pulse
   while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
@@ -73,13 +102,12 @@ void loop() {
     heading_led_on(0);
     delay(50);
     heading_led_off();
-    delay(300);    
+    delay(400);    
   }
 
   //if RC is good - and throtte is above 0 - spin a single rotation (repeat as needed...)
   if (rc_get_throttle_percent() > 0) {
-  
-    //this is where all the motor control happens!  (see spin_control.cpp)
+     //this is where all the motor control happens!  (see spin_control.cpp)
     spin_one_rotation();  
   
   } else {
@@ -88,35 +116,21 @@ void loop() {
     motors_off();
 
     //"fast" idle flash - indicates RC signal is good while sitting idle
-    delay(50);
+    delay(20);
     heading_led_on(0);
-    // adjusts flashing pattern to let user know bot is in config mode
-    if (get_config_mode() == 1) delay(100);
-    delay(50);
-    heading_led_off();    
-    
-    
-    //if user pushes control stick up / holds for 750ms - flashes out top speed (100's of RPMs)
-    if (rc_get_forback() == RC_FORBACK_FORWARD) {
-      delay(750);
-      if (rc_get_forback() == RC_FORBACK_FORWARD) {
-        for (int x = 0; x < get_max_rpm(); x = x + 100) {
-          delay(600);
-          heading_led_on(0);
-          delay(20);
-          heading_led_off();
-        }
-        delay(1200);
-      }
+    delay(40);
+    heading_led_off();
+
+    //extra delay adjusts flashing pattern to let user know bot is in config mode
+    if (get_config_mode() == 1) {
+      delay(200);
+      heading_led_on(0);
+      delay(20);
+      heading_led_off();
     }
 
-    //if user pulls control stick back for 750ms - enters interactive configuration mode
-    if (rc_get_forback() == RC_FORBACK_BACKWARD) {
-      delay(750);
-      if (rc_get_forback() == RC_FORBACK_BACKWARD) {
-        toggle_config_mode(); 
-        if (get_config_mode() == 0) save_melty_config_settings();    //save melty settings on config mode exit
-      }
-    }    
+    check_config_mode();
+    display_rpm_if_requested();
   }
+
 }

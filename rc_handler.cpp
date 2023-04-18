@@ -115,7 +115,7 @@ int rc_get_forback() {
 //0 for hypothetical perfect center (reality is probably +/-50)
 //returns negative value for left / positive value for right
 int rc_get_leftright() {
-  return CENTER_LEFTRIGHT_PULSE_LENGTH - leftright_rc_channel.pulse_length;
+  return leftright_rc_channel.pulse_length - CENTER_LEFTRIGHT_PULSE_LENGTH;
 }
 
 //ISRs for each RC interrupt pin

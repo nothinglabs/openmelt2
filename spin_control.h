@@ -1,10 +1,5 @@
-void init_melty(void);
 
 void spin_one_rotation(void);
-
-void heading_led_on(int led_shimmering);
- 
-void heading_led_off();
 
 int get_max_rpm();
 
@@ -27,4 +22,7 @@ typedef struct melty_parameters_t {
 	unsigned long motor_stop1;  //time offset for when motor 1 stops
 	unsigned long motor_start2; //"" for motor 2 (times can overlap with motor 1)
 	unsigned long motor_stop2;  //""
+  int steering_disabled;  //Prevents adjustment of left / right heading adjustment (used for configuration mode)
+  int led_shimmer;  //LED is shimmering to indicate something to the user
+
 };

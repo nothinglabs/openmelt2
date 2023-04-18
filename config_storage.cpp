@@ -47,12 +47,12 @@ void save_settings_to_eeprom(int led_offset, float accel_radius) {
   write_sentinel();
 }
 
-int load_heading_led_offset(){
+int load_heading_led_offset() {
   if (check_sentinel() != 1) return DEFAULT_LED_OFFSET_PERCENT;
   return EEPROM.read(EEPROM_HEADING_LED_LOC);
 }
 
-float load_accel_mount_radius(){
+float load_accel_mount_radius() {
   if (check_sentinel() != 1) return DEFAULT_ACCEL_MOUNT_RADIUS_CM;
   float accel_radius;
   accel_radius = EEPROM.get(EEPROM_ACCEL_RADIUS_BYTE1_LOC, accel_radius);
