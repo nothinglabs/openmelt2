@@ -3,6 +3,8 @@
 //(see config_storage.cpp for details)
 #define ENABLE_EEPROM_STORAGE   //Comment out this to disable EEPROM (for ARM)
 
+#define EEPROM_WRITTEN_SENTINEL_VALUE 43 //Changing this value will cause existing EEPROM values to be invalidated (good to use if you've really messed up the config....)
+
 //must be Arduino interrupt pins
 //we need 3 interrupt pins - which requires an Arduino with Atmega32u4 or better
 //(Atmega328 only support 2 interrupts)
@@ -12,6 +14,14 @@
 
 #define HEADING_LED_PIN			8
 
+#define BATTERY_ALERT_ENABLED                     //if enabled - heading LED will flicker when battery voltage is low
+#define BATTERY_ADC_PIN A0                        //Pin for ADC voltage divider 
+#define VOLTAGE_DIVIDER 11                        //(~10:1 works well - 10kohm to GND, 100kohm to Bat+).  Resistors have tolerances!  Adjust as needed...
+                                                  //Voltage accurac can be verified by enabling diagnostic loop (see main .ino file)
+#define BATTERY_ADC_WARN_VOLTAGE_THRESHOLD 10.0f   //If voltage drops below this value - then alert is triggered
+#define ARDUINIO_VOLTAGE 5                        //Needed for ADC maths
+#define LOW_BAT_REPEAT_READS_BEFORE_ALARM 10      //Requires this many ADC reads below threshold before alarming
+
 //no configuration changes are needed if only 1 motor is used!
 #define MOTOR_PIN1				9
 #define MOTOR_PIN2				10
@@ -19,6 +29,8 @@
 //default values - can override with interactive config
 #define DEFAULT_ACCEL_MOUNT_RADIUS_CM 5.9
 #define DEFAULT_LED_OFFSET_PERCENT 60   //adjust to make heading LED line up with direction robot travels (increasing moves beacon clockwise)
+
+#define ACCEL_MOUNT_RADIUS_MINIMUM_CM 0.2 //never allow interactive config to set below this value
 
 //This value determines how much movement of the RC stick effects heading adjustment
 //Lesser values cause greater change (greater values cause lesser change - 1.0f seems to work well)

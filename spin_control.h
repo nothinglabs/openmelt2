@@ -2,7 +2,7 @@ void init_melty(void);
 
 void spin_one_rotation(void);
 
-void heading_led_on();
+void heading_led_on(int led_shimmering);
  
 void heading_led_off();
 

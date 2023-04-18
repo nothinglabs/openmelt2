@@ -12,10 +12,11 @@
 
 static unsigned long shortest_rotation_interval_us = 0;
 
-static int config_mode = false;
+static int config_mode = 0;
 
-float accel_mount_radius_cm = DEFAULT_ACCEL_MOUNT_RADIUS_CM;
-float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;
+static float accel_mount_radius_cm = DEFAULT_ACCEL_MOUNT_RADIUS_CM;
+static float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;
+static int led_shimmer_on = 0;
 
 void load_melty_config_settings() {
 #ifdef ENABLE_EEPROM_STORAGE 
@@ -30,13 +31,14 @@ void save_melty_config_settings() {
 #endif  
 }
 
-
-void update_shortest_rotation_internval(unsigned long rotation_interval_us) {
+void update_shortest_rotation_interval(unsigned long rotation_interval_us) {
   if (rotation_interval_us < shortest_rotation_interval_us || shortest_rotation_interval_us == 0) shortest_rotation_interval_us = rotation_interval_us;
 }
 
 void toggle_config_mode() {
   config_mode = !config_mode;
+  //enterring or exiting config mode also resets highest observed RPM
+  update_shortest_rotation_interval(0);
 }
 
 int get_config_mode() {
@@ -45,15 +47,33 @@ int get_config_mode() {
 
 int get_max_rpm() {
   if (shortest_rotation_interval_us == 0) return 0;
-  return (1.0f / (shortest_rotation_interval_us / 1000000.0f)) * 60.0f;
+  float shortest_interval_seconds = shortest_rotation_interval_us / 1000000.0f;
+  float rotations_per_second = 1 / shortest_interval_seconds;
+  float roations_per_minute = rotations_per_second * 60;
+
+  //shortest_rotation_interval_us = 0;
+
+  return (int)roations_per_minute;
 }
 
 void init_melty(void) {
   pinMode(HEADING_LED_PIN, OUTPUT);
 }
 
-void heading_led_on() {
-  digitalWrite(HEADING_LED_PIN, HIGH);
+
+void heading_led_on(int shimmer) {
+    //check to see if we should "shimmer" the LED to indicate something to user
+  if (shimmer == 1) {
+    if (micros() & (1 << 10)) {
+      digitalWrite(HEADING_LED_PIN, HIGH);
+    } else {
+      digitalWrite(HEADING_LED_PIN, LOW);
+    }  
+  } else {
+    //just turn LED on
+     digitalWrite(HEADING_LED_PIN, HIGH);
+  }
+  
 }
 
 void heading_led_off() {
@@ -64,14 +84,22 @@ void update_radius_for_config_mode() {
 //only adjust if stick is outside deadzone
   if (rc_get_is_lr_in_config_deadzone() == RC_LR_IN_CONFIG_DEADZONE) return;
 
+  //show that we are changing config
+  led_shimmer_on = 1;
+
   float adjustment_factor = (accel_mount_radius_cm * (float)(rc_get_leftright() / (float)NOMINAL_PULSE_RANGE));
   adjustment_factor = adjustment_factor / LEFT_RIGHT_CONFIG_RADIUS_ADJUST_DIVISOR;
   accel_mount_radius_cm = accel_mount_radius_cm + adjustment_factor;
+
+  if (accel_mount_radius_cm < ACCEL_MOUNT_RADIUS_MINIMUM_CM) accel_mount_radius_cm = ACCEL_MOUNT_RADIUS_MINIMUM_CM;
 }
 
 void update_heading_led_offset_for_config_mode() {
 //only adjust if stick is outside deadzone  
   if (rc_get_is_lr_in_config_deadzone() == RC_LR_IN_CONFIG_DEADZONE) return;
+
+  //show that we are changing config
+  led_shimmer_on = 1;
 
   float adjustment_factor = (accel_mount_radius_cm * (float)(rc_get_leftright() / (float)NOMINAL_PULSE_RANGE));
   adjustment_factor = adjustment_factor / LEFT_RIGHT_CONFIG_LED_ADJUST_DIVISOR;
@@ -146,7 +174,7 @@ static struct melty_parameters_t get_melty_parameters(void) {
   
   melty_parameters.rotation_interval_us = get_rotation_interval_ms(steering_disabled) * 1000;
 
-  update_shortest_rotation_internval(melty_parameters.rotation_interval_us);
+  update_shortest_rotation_interval(melty_parameters.rotation_interval_us);
   
   //if under defined RPM - just try to spin up
   if (melty_parameters.rotation_interval_us > MAX_TRANSLATION_ROTATION_INTERVAL_US) motor_on_portion = 1;
@@ -182,6 +210,19 @@ static struct melty_parameters_t get_melty_parameters(void) {
   return melty_parameters;
 }
 
+//check for low battery - but only alarm after certain number of low reads in a row (prevents ADC noise from alarming)
+int battery_voltage_low(){
+  static int low_bat_count = 0;
+  float battery_voltage = (analogRead(BATTERY_ADC_PIN) * (ARDUINIO_VOLTAGE / 1023.0)) * VOLTAGE_DIVIDER;
+  if (battery_voltage < BATTERY_ADC_WARN_VOLTAGE_THRESHOLD) {
+    low_bat_count++;
+  } else {
+    low_bat_count = 0;
+  }
+  if (low_bat_count > LOW_BAT_REPEAT_READS_BEFORE_ALARM) return 1;
+  return 0;
+}
+
 //rotates the robot once + handles translational drift
 //(repeat as needed)
 void spin_one_rotation(void) {
@@ -195,11 +236,19 @@ void spin_one_rotation(void) {
   //by starting before the loop - time performing accel sampling / floating point math is included in loop time
   unsigned long start_time = micros();
 
+  //default to no LED shimmer (can be turned on by config mode or battery_low)
+  led_shimmer_on = 0;
+
   lock_rc_data();   //prevent changes to RC values during calculations
   //all slow stuff (floating point math / sensor reads) should happen here...
   struct melty_parameters_t melty_parameters = get_melty_parameters();
   unlock_rc_data();
   
+  //if the battery voltage is low - shimmer the LED to let user know
+#ifdef BATTERY_ALERT_ENABLED
+  if (battery_voltage_low() == 1) led_shimmer_on = 1;
+#endif
+
   unsigned long time_spent_this_rotation_us = 0;
   //loop for one rotation of robot
   while (time_spent_this_rotation_us < melty_parameters.rotation_interval_us) {
@@ -238,13 +287,13 @@ void spin_one_rotation(void) {
     //displays heading LED at correct location
     if (melty_parameters.led_start > melty_parameters.led_stop) {
       if (time_spent_this_rotation_us >= melty_parameters.led_start || time_spent_this_rotation_us <= melty_parameters.led_stop) {
-        heading_led_on();
+        heading_led_on(led_shimmer_on);
       } else {
         heading_led_off();
       }
     } else {
       if (time_spent_this_rotation_us >= melty_parameters.led_start && time_spent_this_rotation_us <= melty_parameters.led_stop) {
-        heading_led_on();
+        heading_led_on(led_shimmer_on);
       } else {
         heading_led_off();
       }

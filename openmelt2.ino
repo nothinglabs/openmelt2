@@ -18,7 +18,7 @@ void setup() {
 
   //do a little pulse at boot-up to make it clear we booted
   for (int x = 0; x < 30; x++) {
-    heading_led_on();
+    heading_led_on(0);
     delay(10);
     heading_led_off();
     delay(20);
@@ -34,6 +34,11 @@ void setup() {
 //dumps out diagnostics info
 void diagnostic_loop() {
 
+  float battery_voltage = (analogRead(BATTERY_ADC_PIN) * (ARDUINIO_VOLTAGE / 1023.0)) * VOLTAGE_DIVIDER;
+
+  Serial.print(battery_voltage);
+  Serial.print(", ");
+  
 #ifdef ENABLE_EEPROM_STORAGE  
   Serial.print(load_accel_mount_radius());
   Serial.print(", ");
@@ -65,7 +70,7 @@ void loop() {
 //if the rc signal isn't good - keep motors off - and cycle slow LED pulse
   while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
     motors_off();
-    heading_led_on();
+    heading_led_on(0);
     delay(50);
     heading_led_off();
     delay(300);    
@@ -84,21 +89,25 @@ void loop() {
 
     //"fast" idle flash - indicates RC signal is good while sitting idle
     delay(50);
-    heading_led_on();
-    //adjusts flashing pattern to let user know bot is in config mode
+    heading_led_on(0);
+    // adjusts flashing pattern to let user know bot is in config mode
     if (get_config_mode() == 1) delay(100);
     delay(50);
     heading_led_off();    
-
-    //if user pushes control stick up - flashes out top speed (100's of RPMs)
+    
+    
+    //if user pushes control stick up / holds for 750ms - flashes out top speed (100's of RPMs)
     if (rc_get_forback() == RC_FORBACK_FORWARD) {
-      for (int x = 0; x < get_max_rpm(); x = x + 100) {
-        delay(300);
-        heading_led_on();
-        delay(10);
-        heading_led_off();
+      delay(750);
+      if (rc_get_forback() == RC_FORBACK_FORWARD) {
+        for (int x = 0; x < get_max_rpm(); x = x + 100) {
+          delay(600);
+          heading_led_on(0);
+          delay(20);
+          heading_led_off();
+        }
+        delay(1200);
       }
-      delay(500);
     }
 
     //if user pulls control stick back for 750ms - enters interactive configuration mode
