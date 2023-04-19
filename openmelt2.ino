@@ -7,8 +7,6 @@
 #include "led_driver.h"
 #include "battery_monitor.h"
 
-//#define JUST_DO_DIAGNOSTIC_LOOP
-
 void setup() {
   
   Serial.begin(115200);
@@ -43,27 +41,29 @@ void setup() {
 //dumps out diagnostics info
 void diagnostic_loop() {
 
+#ifdef BATTERY_ALERT_ENABLED
+  Serial.print("  Battery Voltage: ");
   Serial.print(get_battery_voltage());
-  Serial.print(", ");
+#endif 
   
 #ifdef ENABLE_EEPROM_STORAGE  
+  Serial.print("  Accel Radius: ");
   Serial.print(load_accel_mount_radius());
-  Serial.print(", ");
+  Serial.print("  Heading Offset: ");
   Serial.print(load_heading_led_offset());
-  Serial.print(", ");
 #endif  
 
-  Serial.print(rc_signal_is_healthy());
-  Serial.print(", ");
+  Serial.print("  Accel G: ");
   Serial.print(get_accel_force_g());
-  Serial.print(", ");
+
+  Serial.print("  RC Health: ");
+  Serial.print(rc_signal_is_healthy());
+  Serial.print("  RC Throttle: ");
   Serial.print(rc_get_throttle_percent());
-  Serial.print(", ");
+  Serial.print("  RC L/R: ");
   Serial.print(rc_get_leftright());
-  Serial.print(", ");
-  Serial.print(rc_get_forback());
-  Serial.print(", ");
-  Serial.println(get_max_rpm());
+  Serial.print("  RC F/B: ");
+  Serial.println(rc_get_forback());
 }
 
 void display_rpm_if_requested() {

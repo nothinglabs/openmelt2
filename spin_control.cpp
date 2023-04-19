@@ -12,6 +12,15 @@
 #include "led_driver.h"
 #include "battery_monitor.h"
 
+
+#define ACCEL_MOUNT_RADIUS_MINIMUM_CM 0.2                 //Never allow interactive config to set below this value
+#define LEFT_RIGHT_CONFIG_RADIUS_ADJUST_DIVISOR 50.0f     //How quick accel. radius is adjusted in config mode (larger values = slower)
+#define LEFT_RIGHT_CONFIG_LED_ADJUST_DIVISOR 0.4f         //How quick LED heading is adjusted in config mode (larger values = slower)
+
+#define MAX_TRANSLATION_ROTATION_INTERVAL_US (1.0f / MIN_TRANSLATION_RPM) * 60 * 1000 * 1000
+#define MAX_TRACKING_ROTATION_INTERVAL_US MAX_TRANSLATION_ROTATION_INTERVAL_US * 2   //don't track heading if we are this slow (also puts upper limit on time spent in melty loop for safety)
+
+
 static float accel_mount_radius_cm = DEFAULT_ACCEL_MOUNT_RADIUS_CM;
 static float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;
 
@@ -85,6 +94,7 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
 
     //radius adjustment overrides steering
     melty_parameters.steering_disabled = 1;
+
     //only adjust if stick is outside deadzone
     if (rc_get_is_lr_in_config_deadzone() != RC_LR_IN_CONFIG_DEADZONE) {
       //show that we are changing config
