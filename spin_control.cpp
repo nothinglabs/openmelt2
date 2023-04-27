@@ -224,12 +224,12 @@ void spin_one_rotation(void) {
       if (time_spent_this_rotation_us >= melty_parameters.motor_start1 && time_spent_this_rotation_us <= melty_parameters.motor_stop1) {
         motor_1_on();
       } else {
-        motor_1_off();
+        motor_1_coast();
       }
       if (time_spent_this_rotation_us >= melty_parameters.motor_start2 || time_spent_this_rotation_us <= melty_parameters.motor_stop2) {
         motor_2_on();
       } else {
-        motor_2_off();
+        motor_2_coast();
       }
     }
 
@@ -238,12 +238,12 @@ void spin_one_rotation(void) {
       if (time_spent_this_rotation_us >= melty_parameters.motor_start2 || time_spent_this_rotation_us <= melty_parameters.motor_stop2) {
         motor_1_on();
       } else {
-        motor_1_off();
+        motor_1_coast();
       }
       if (time_spent_this_rotation_us >= melty_parameters.motor_start1 && time_spent_this_rotation_us <= melty_parameters.motor_stop1) {
         motor_2_on();
       } else {
-        motor_2_off();
+        motor_2_coast();
       }
     }
 
