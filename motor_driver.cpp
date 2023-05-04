@@ -9,48 +9,48 @@
 //motor_X_off functions are used for when the robot is spun-down
 
 void motor_1_on() {
-#ifdef ENABLE_HIGH_SPEED_PWM_BRUSHLESS_ESC
-  analogWrite(MOTOR_PIN1, PWM_ESC_MOTOR_ON);
+#ifdef ENABLE_PWM_MOTOR_CONTROL
+  analogWrite(MOTOR_PIN1, PWM_MOTOR_ON);
 #else
   digitalWrite(MOTOR_PIN1, HIGH);
 #endif
 }
 
 void motor_2_on() {
-#ifdef ENABLE_HIGH_SPEED_PWM_BRUSHLESS_ESC
-  analogWrite(MOTOR_PIN2, PWM_ESC_MOTOR_ON);
+#ifdef ENABLE_PWM_MOTOR_CONTROL
+  analogWrite(MOTOR_PIN2, PWM_MOTOR_ON);
 #else
   digitalWrite(MOTOR_PIN2, HIGH);
 #endif
 }
 
 void motor_1_coast() {
-#ifdef ENABLE_HIGH_SPEED_PWM_BRUSHLESS_ESC
-  analogWrite(MOTOR_PIN1, PWM_ESC_MOTOR_COAST);
+#ifdef ENABLE_PWM_MOTOR_CONTROL
+  analogWrite(MOTOR_PIN1, PWM_MOTOR_COAST);
 #else
   digitalWrite(MOTOR_PIN1, LOW);  //same as "off" for brushed motors
 #endif
 }
 
 void motor_2_coast() {
-#ifdef ENABLE_HIGH_SPEED_PWM_BRUSHLESS_ESC
-  analogWrite(MOTOR_PIN2, PWM_ESC_MOTOR_COAST);
+#ifdef ENABLE_PWM_MOTOR_CONTROL
+  analogWrite(MOTOR_PIN2, PWM_MOTOR_COAST);
 #else
   digitalWrite(MOTOR_PIN2, LOW);  //same as "off" for brushed motors
 #endif
 }
 
 void motor_1_off() {
-#ifdef ENABLE_HIGH_SPEED_PWM_BRUSHLESS_ESC
-  analogWrite(MOTOR_PIN1, PWM_ESC_MOTOR_OFF);
+#ifdef ENABLE_PWM_MOTOR_CONTROL
+  analogWrite(MOTOR_PIN1, PWM_MOTOR_OFF);
 #else
   digitalWrite(MOTOR_PIN1, LOW);
 #endif
 }
 
 void motor_2_off() {
-#ifdef ENABLE_HIGH_SPEED_PWM_BRUSHLESS_ESC
-  analogWrite(MOTOR_PIN2, PWM_ESC_MOTOR_OFF);
+#ifdef ENABLE_PWM_MOTOR_CONTROL
+  analogWrite(MOTOR_PIN2, PWM_MOTOR_OFF);
 #else
   digitalWrite(MOTOR_PIN2, LOW);
 #endif
