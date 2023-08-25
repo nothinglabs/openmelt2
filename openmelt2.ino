@@ -7,32 +7,51 @@
 #include "led_driver.h"
 #include "battery_monitor.h"
 
+
+#ifdef ENABLE_WATCHDOG
+#include <Adafruit_SleepyDog.h>
+#endif
+
+void service_watchdog() {
+#ifdef ENABLE_WATCHDOG
+    Watchdog.reset();
+#endif
+}
+
 void setup() {
   
   Serial.begin(115200);
 
-  init_rc();
-  init_accel();
+  //get motor drivers setup (and off!) first thing
   init_motors();
   init_led();
 
-  //do a little pulse at boot-up to make it clear we booted
-  
-  for (int x = 0; x < 4; x++) {
+  //do a little pulse at boot-up to make it clear we booted  
+  for (int x = 0; x < 5; x++) {
     heading_led_on(0);
-    delay(300);
+    delay(250);
     heading_led_off();
-    delay(300);
+    delay(250);
   }
+
+#ifdef ENABLE_WATCHDOG
+    //returns actual watchdog timeout MS
+    int watchdog_ms = Watchdog.enable(WATCH_DOG_TIMEOUT_MS);
+#endif
+
+  init_rc();
+  init_accel();   //accelerometer uses i2c - which can fail blocking (so only initializing it -after- the watchdog is running)
   
 //load settings on boot
- #ifdef ENABLE_EEPROM_STORAGE  
+#ifdef ENABLE_EEPROM_STORAGE  
   load_melty_config_settings();
 #endif
 
 #ifdef JUST_DO_DIAGNOSTIC_LOOP
   while (1) {
+    service_watchdog();
     diagnostic_loop();
+    delay(250);   //delay prevents serial from getting flooded (can cause issues programming)
   }
 #endif
 
@@ -72,6 +91,7 @@ void display_rpm_if_requested() {
     delay(750);
     if (rc_get_forback() == RC_FORBACK_FORWARD) {
       for (int x = 0; x < get_max_rpm(); x = x + 100) {
+        service_watchdog();   //flashing out RPM can take a while - need to assure watchdog doesn't trigger
         delay(600);
         heading_led_on(0);
         delay(20);
@@ -95,14 +115,17 @@ void check_config_mode() {
 
 
 void loop() {
-  
+
+  service_watchdog();
+
 //if the rc signal isn't good - keep motors off - and cycle slow LED pulse
   while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
+    service_watchdog();
     motors_off();
     heading_led_on(0);
     delay(50);
     heading_led_off();
-    delay(400);    
+    delay(400);
   }
 
   //if RC is good - and throtte is above 0 - spin a single rotation (repeat as needed...)

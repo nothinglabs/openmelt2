@@ -5,6 +5,9 @@
 
 //#define JUST_DO_DIAGNOSTIC_LOOP                 //Disables the robot / displays config / battery voltage / RC info via serial
 
+#define ENABLE_WATCHDOG                           //Uses Adafruit's sleepdog to enable watchdog / reset (tested on AVR - should work for ARM https://github.com/adafruit/Adafruit_SleepyDog)
+#define WATCH_DOG_TIMEOUT_MS 2000                 //Timeout value for watchdog (not all values are supported - 2000ms verified with Arudino Micro)
+
 #define ENABLE_EEPROM_STORAGE                     //Comment out this to disable EEPROM (for ARM)
 #define EEPROM_WRITTEN_SENTINEL_VALUE 43          //Changing this value will cause existing EEPROM values to be invalidated (revert to defaults)
 
@@ -37,8 +40,8 @@
 
 //#define ENABLE_PWM_MOTOR_CONTROL                //Enable this for 480hz PWM motor control
 #define PWM_MOTOR_ON 180                          //Motor PWM ON duty cycle (Simonk: 140 seems barely on / 230 seems a good near-full-throttle value)
-#define PWM_MOTOR_COAST 130                       //Motor PWM COAST duty cycle - set to same as PWM_ESC_MOTOR_OFF for fully unpowered (best translation?)
-#define PWM_MOTOR_OFF 100                         //Motor PWM OFF duty cycle (Simonk: 100 worked well in testing - if this is too low - ESC may not init)
+#define PWM_MOTOR_COAST 0                       //Motor PWM COAST duty cycle - set to same as PWM_ESC_MOTOR_OFF for fully unpowered (best translation?)
+#define PWM_MOTOR_OFF 0                         //Motor PWM OFF duty cycle (Simonk: 100 worked well in testing - if this is too low - ESC may not init)
 
 //Battery monitor constants
 #define BATTERY_ALERT_ENABLED                     //if enabled - heading LED will flicker when battery voltage is low
