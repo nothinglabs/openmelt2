@@ -74,7 +74,7 @@ static float get_rotation_interval_ms(int steering_disabled) {
   //calculate RPM from g's - derived from "G = 0.00001118 * r * RPM^2"
   float rpm;
   //use of absolute makes it so we don't need to worry about accel orientation
-  rpm = fabs(get_accel_force_g()) * 89445.0f;
+  rpm = fabs(get_accel_force_g() - ACCEL_OFFSET) * 89445.0f;
   rpm = rpm / effective_radius_in_cm;
   rpm = sqrt(rpm);
 
@@ -140,11 +140,22 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
 //This entire section takes ~1300us on an Atmega32u4 (acceptable)
 static struct melty_parameters_t get_melty_parameters(void) {
 
-  float led_offset_portion = led_offset_percent / 100.0f;
-  float motor_on_portion = rc_get_throttle_percent() / 100.0f;
-  float led_on_portion = .4f * (1.1f - motor_on_portion);  //LED width changed with throttle
-
   struct melty_parameters_t melty_parameters = {};
+
+  float led_offset_portion = led_offset_percent / 100.0f;
+
+  float motor_on_portion = rc_get_throttle_percent() / 100.0f;
+
+  melty_parameters.throttle_percent = motor_on_portion;
+
+  //locks motor_on_portion if we are throttling via PWM
+  #ifdef DYNAMIC_PWM_MOTOR_ON_PORTION
+  if (THROTTLE_TYPE == DYNAMIC_PWM_THROTTLE) {
+    motor_on_portion = DYNAMIC_PWM_MOTOR_ON_PORTION;
+  }
+  #endif 
+
+  float led_on_portion = .4f * (1.1f - motor_on_portion);  //LED width changed with throttle
 
   melty_parameters.translate_forback = rc_get_forback();
 
@@ -222,12 +233,16 @@ void spin_one_rotation(void) {
     //handle translating forwards
     if (melty_parameters.translate_forback == RC_FORBACK_FORWARD || (melty_parameters.translate_forback == RC_FORBACK_NEUTRAL && cycle_count % 2 == 0)) {
       if (time_spent_this_rotation_us >= melty_parameters.motor_start1 && time_spent_this_rotation_us <= melty_parameters.motor_stop1) {
-        motor_1_on();
+
+        motor_1_on(melty_parameters.throttle_percent);
+
       } else {
         motor_1_coast();
       }
       if (time_spent_this_rotation_us >= melty_parameters.motor_start2 || time_spent_this_rotation_us <= melty_parameters.motor_stop2) {
-        motor_2_on();
+        
+        motor_2_on(melty_parameters.throttle_percent);
+
       } else {
         motor_2_coast();
       }
@@ -236,18 +251,19 @@ void spin_one_rotation(void) {
     //handle translating backwards
     if (melty_parameters.translate_forback == RC_FORBACK_BACKWARD || (melty_parameters.translate_forback == RC_FORBACK_NEUTRAL && cycle_count % 2 == 1)) {
       if (time_spent_this_rotation_us >= melty_parameters.motor_start2 || time_spent_this_rotation_us <= melty_parameters.motor_stop2) {
-        motor_1_on();
+        motor_1_on(melty_parameters.throttle_percent);
       } else {
         motor_1_coast();
       }
       if (time_spent_this_rotation_us >= melty_parameters.motor_start1 && time_spent_this_rotation_us <= melty_parameters.motor_stop1) {
-        motor_2_on();
+        motor_2_on(melty_parameters.throttle_percent);
       } else {
         motor_2_coast();
       }
     }
 
     //displays heading LED at correct location
+    #ifndef HEADING_LED_MAPS_TO_MOTOR1
     if (melty_parameters.led_start > melty_parameters.led_stop) {
       if (time_spent_this_rotation_us >= melty_parameters.led_start || time_spent_this_rotation_us <= melty_parameters.led_stop) {
         heading_led_on(melty_parameters.led_shimmer);
@@ -261,6 +277,7 @@ void spin_one_rotation(void) {
         heading_led_off();
       }
     }
+    #endif
 
     //just updating at end of loop to assure same value used for all evaluations
     time_spent_this_rotation_us = micros() - start_time;

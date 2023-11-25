@@ -5,7 +5,7 @@
 #include "melty_config.h"
 
 #define RC_DATA_UNLOCKED 0
-#define RC_DATA_LOCKED 1
+#define RC_DATA_LOCKED 1 
 
 static int rc_data_lock_state = RC_DATA_UNLOCKED;
 

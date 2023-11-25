@@ -73,7 +73,8 @@ void diagnostic_loop() {
 #endif  
 
   Serial.print("  Accel G: ");
-  Serial.print(get_accel_force_g());
+  Serial.print(get_accel_force_g()  - ACCEL_OFFSET);
+
 
   Serial.print("  RC Health: ");
   Serial.print(rc_signal_is_healthy());

@@ -42,7 +42,7 @@
 #define RC_LR_NOT_IN_CONFIG_DEADZONE 0
 
 //if we don't get a valid RC update on the throttle at least this often - spin down
-#define MAX_MS_BETWEEN_RC_UPDATES 300
+#define MAX_MS_BETWEEN_RC_UPDATES 900
 
 void init_rc();
 int rc_signal_is_healthy();
