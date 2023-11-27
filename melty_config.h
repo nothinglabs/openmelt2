@@ -14,14 +14,14 @@
 #define WATCH_DOG_TIMEOUT_MS 2000                 //Timeout value for watchdog (not all values are supported - 2000ms verified with Arudino Micro)
 
 #define ENABLE_EEPROM_STORAGE                     //Comment out this to disable EEPROM (for ARM)
-#define EEPROM_WRITTEN_SENTINEL_VALUE 44          //Changing this value will cause existing EEPROM values to be invalidated (revert to defaults)
+#define EEPROM_WRITTEN_SENTINEL_VALUE 45          //Changing this value will cause existing EEPROM values to be invalidated (revert to defaults)
 
 //These values can be overriden with interactive config (loaded from EEPROM on boot)
 #define DEFAULT_ACCEL_MOUNT_RADIUS_CM 3.9         //Radius of accelerometer from center of robot
-#define DEFAULT_LED_OFFSET_PERCENT 10             //Adjust to make heading LED line up with direction robot travels (increasing moves beacon clockwise)
+#define DEFAULT_LED_OFFSET_PERCENT 10             //Adjust to make heading LED line up with direction robot travels 0-99 (increasing moves beacon clockwise)
 
                                                   //TODO: add calibration for this in real-time config
-#define ACCEL_OFFSET -2.8f                        //Value accelerometer returns with robot at rest (in G) - adjusts for any offset
+#define ACCEL_ZERO_G_OFFSET 0.0f                        //Value accelerometer returns with robot at rest (in G) - adjusts for any offset
                                                   //At highest G-range setting (+/-400g) LIS331 might have +/-2 G offset
                                                   //For small-radius bots - try changing to LIS331 to +/-200g range for improved accuracy (accel_handler.cpp)
 
