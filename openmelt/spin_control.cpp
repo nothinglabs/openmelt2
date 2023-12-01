@@ -166,7 +166,7 @@ static struct melty_parameters_t get_melty_parameters(void) {
 
   melty_parameters.throttle_percent = motor_on_portion;
 
-  //locks motor_on_portion if we are throttling via PWM
+  //locks motor_on_portion if we are throttling via PWM if DYNAMIC_PWM_MOTOR_ON_PORTION is defined
   #ifdef DYNAMIC_PWM_MOTOR_ON_PORTION
   if (THROTTLE_TYPE == DYNAMIC_PWM_THROTTLE) {
     motor_on_portion = DYNAMIC_PWM_MOTOR_ON_PORTION;

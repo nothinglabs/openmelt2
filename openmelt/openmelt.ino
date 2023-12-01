@@ -75,6 +75,9 @@ void diagnostic_loop() {
   Serial.print("  Accel G: ");
   Serial.print(get_accel_force_g()  - load_accel_zero_g_offset());
 
+  Serial.print("  Battery V: ");
+  Serial.print(get_battery_voltage());
+
 
   Serial.print("  RC Health: ");
   Serial.print(rc_signal_is_healthy());
@@ -84,6 +87,8 @@ void diagnostic_loop() {
   Serial.print(rc_get_leftright());
   Serial.print("  RC F/B: ");
   Serial.println(rc_get_forback());
+
+  
 }
 
 void display_rpm_if_requested() {

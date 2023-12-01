@@ -14,15 +14,15 @@
 #define WATCH_DOG_TIMEOUT_MS 2000                 //Timeout value for watchdog (not all values are supported - 2000ms verified with Arudino Micro)
 
 #define ENABLE_EEPROM_STORAGE                     //Comment out this to disable EEPROM (for ARM)
-#define EEPROM_WRITTEN_SENTINEL_VALUE 45          //Changing this value will cause existing EEPROM values to be invalidated (revert to defaults)
+#define EEPROM_WRITTEN_SENTINEL_VALUE 42          //Changing this value will cause existing EEPROM values to be invalidated (revert to defaults)
 
 //These values can be overriden with interactive config (loaded from EEPROM on boot)
 #define DEFAULT_ACCEL_MOUNT_RADIUS_CM 3.9         //Radius of accelerometer from center of robot
-#define DEFAULT_LED_OFFSET_PERCENT 10             //Adjust to make heading LED line up with direction robot travels 0-99 (increasing moves beacon clockwise)
-
-                                                  //TODO: add calibration for this in real-time config
-#define ACCEL_ZERO_G_OFFSET 0.0f                        //Value accelerometer returns with robot at rest (in G) - adjusts for any offset
-                                                  //At highest G-range setting (+/-400g) LIS331 might have +/-2 G offset
+#define DEFAULT_LED_OFFSET_PERCENT 7              //Adjust to make heading LED line up with direction robot travels 0-99 (increasing moves beacon clockwise)
+                                                   
+#define ACCEL_ZERO_G_OFFSET 0.0f                  //Value accelerometer returns with robot at rest (in G) - adjusts for any offset
+                                                  //Just enterring and exiting config mode will automatically set this value / save to EEPROM (based on current accel reading reflecting 0g)
+                                                  //At highest G-range setting (+/-400g) LIS331 might have +/-2 G offset (enough to cause error)
                                                   //For small-radius bots - try changing to LIS331 to +/-200g range for improved accuracy (accel_handler.cpp)
 
 #define LEFT_RIGHT_HEADING_CONTROL_DIVISOR 1.0f   //How quick steering is (larger values = slower)
@@ -81,7 +81,7 @@ enum throttle_modes {
 #define BATTERY_ALERT_ENABLED                     //if enabled - heading LED will flicker when battery voltage is low
 #define BATTERY_ADC_PIN A0                        //Pin for ADC voltage divider 
 #define VOLTAGE_DIVIDER 11                        //(~10:1 works well - 10kohm to GND, 100kohm to Bat+).  Resistors have tolerances!  Adjust as needed...
-#define BATTERY_ADC_WARN_VOLTAGE_THRESHOLD 10.0f  //If voltage drops below this value - then alert is triggered
+#define BATTERY_ADC_WARN_VOLTAGE_THRESHOLD 7.0f  //If voltage drops below this value - then alert is triggered
 #define ARDUINIO_VOLTAGE 5.0f                     //Needed for ADC maths for battery monitor
 #define LOW_BAT_REPEAT_READS_BEFORE_ALARM 10      //Requires this many ADC reads below threshold before alarming
 
