@@ -10,6 +10,10 @@
 
 //#define HEADING_LED_MAPS_TO_MOTOR1              //Causes heading LED to turn on/off to match motor 1 state (enabling this can be good for troubleshooting)
 
+//below are not implemented
+//#define MAX_RPM_BEFORE_THROTTLE_LIMIT 1500  
+//#define THROTTLE_PERCENT_FOR_THROTTLE_LIMIT 20
+
 #define ENABLE_WATCHDOG                           //Uses Adafruit's sleepdog to enable watchdog / reset (tested on AVR - should work for ARM https://github.com/adafruit/Adafruit_SleepyDog)
 #define WATCH_DOG_TIMEOUT_MS 2000                 //Timeout value for watchdog (not all values are supported - 2000ms verified with Arudino Micro)
 

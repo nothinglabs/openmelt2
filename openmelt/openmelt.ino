@@ -95,8 +95,9 @@ void display_rpm_if_requested() {
 //if user pushes control stick up / holds for 750ms - flashes out top speed (100's of RPMs)
   if (rc_get_forback() == RC_FORBACK_FORWARD) {
     delay(750);
-    if (rc_get_forback() == RC_FORBACK_FORWARD) {
-      for (int x = 0; x < get_max_rpm(); x = x + 100) {
+     //prevent accidental entry into RPM flash / throttle up cancels RPM count
+    if (rc_get_forback() == RC_FORBACK_FORWARD && rc_get_throttle_percent() == 0) {
+      for (int x = 0; x < get_max_rpm() && rc_get_throttle_percent() == 0; x = x + 100) {
         service_watchdog();   //flashing out RPM can take a while - need to assure watchdog doesn't trigger
         delay(600);
         heading_led_on(0);

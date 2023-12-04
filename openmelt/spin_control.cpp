@@ -20,6 +20,9 @@
 #define MAX_TRANSLATION_ROTATION_INTERVAL_US (1.0f / MIN_TRANSLATION_RPM) * 60 * 1000 * 1000
 #define MAX_TRACKING_ROTATION_INTERVAL_US MAX_TRANSLATION_ROTATION_INTERVAL_US * 2   //don't track heading if we are this slow (also puts upper limit on time spent in melty loop for safety)
 
+//not implemented
+//#define MIN_ROTATION_INTERVAL_BEFORE_THROTTLE_LIMIT_US (1.0f / MAX_RPM_BEFORE_THROTTLE_LIMIT) * 60 * 1000 * 1000
+
 
 static float accel_mount_radius_cm = DEFAULT_ACCEL_MOUNT_RADIUS_CM;
 static float accel_zero_g_offset = ACCEL_ZERO_G_OFFSET;
@@ -162,18 +165,19 @@ static struct melty_parameters_t get_melty_parameters(void) {
 
   float led_offset_portion = led_offset_percent / 100.0f;
 
-  float motor_on_portion = rc_get_throttle_percent() / 100.0f;
+  melty_parameters.throttle_percent = rc_get_throttle_percent() / 100.0f;
 
-  melty_parameters.throttle_percent = motor_on_portion;
+  //by default motor_on_portion maps to thottle_percent input - but that can be altered
+  float motor_on_portion = melty_parameters.throttle_percent;
 
-  //locks motor_on_portion if we are throttling via PWM if DYNAMIC_PWM_MOTOR_ON_PORTION is defined
+  //changes motor_on_portion to fixed value if we are throttling via PWM if DYNAMIC_PWM_MOTOR_ON_PORTION is defined
   #ifdef DYNAMIC_PWM_MOTOR_ON_PORTION
   if (THROTTLE_TYPE == DYNAMIC_PWM_THROTTLE) {
     motor_on_portion = DYNAMIC_PWM_MOTOR_ON_PORTION;
   }
   #endif 
 
-  float led_on_portion = .4f * (1.1f - motor_on_portion);  //LED width changed with throttle
+  float led_on_portion = .4f * (1.1f - motor_on_portion);  //LED width changed with throttle percent
 
   melty_parameters.translate_forback = rc_get_forback();
 
@@ -184,7 +188,7 @@ static struct melty_parameters_t get_melty_parameters(void) {
 
   melty_parameters.rotation_interval_us = get_rotation_interval_ms(melty_parameters.steering_disabled) * 1000;
   
-  //if under defined RPM - just try to spin up
+  //if under defined RPM - just try to spin up (motors on for full rotation)
   if (melty_parameters.rotation_interval_us > MAX_TRANSLATION_ROTATION_INTERVAL_US) motor_on_portion = 1;
 
   //if we are too slow - don't even try to track heading
