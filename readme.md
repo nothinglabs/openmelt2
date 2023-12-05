@@ -1,4 +1,4 @@
-#Open Melt 2
+# Open Melt 2
 
 Open Melt is an open-source translational drift (aka "melty brain") robot controller project.  
 
