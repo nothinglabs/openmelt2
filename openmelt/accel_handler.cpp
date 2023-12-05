@@ -3,7 +3,7 @@
 //Two breakout boards using the H3LIS331DL accelerometer have been tested / verified to work
 
 //Sparkfun's H3LIS331DL breakout: https://www.sparkfun.com/products/14480 (3v part)
-//Requires using SparkFun 3v<->5v Logic Level Converter https://www.sparkfun.com/products/12009 to interface with 5v arduino
+//Requires using  to interface with 5v arduino
 
 //Adafruit's HSLIS311 breakout includes a level converter - is a single component solution:
 //https://www.adafruit.com/product/4627

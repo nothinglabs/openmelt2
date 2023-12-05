@@ -1,8 +1,9 @@
 #ifndef MELTY_CONFIG_GUARD  //header guard
 #define MELTY_CONFIG_GUARD
 
-//NOTE: This code doesn't currently support persistent config storage for ARM-based Arduinos
-//(see config_storage.cpp for details)
+//This code has not been tested on ARM / non-AVR Arduinos (but may work)
+//Doesn't currently support persistent config storage for non-AVR Arduinos (see config_storage.cpp for details)
+//490Hz PWM-throttle behavior is specific to Atmega32u4 (see below)
 
 //Note: Accelerometer is connected with default Arduino SDA / SCL pins
 
@@ -25,9 +26,9 @@
 #define DEFAULT_LED_OFFSET_PERCENT 7              //Adjust to make heading LED line up with direction robot travels 0-99 (increasing moves beacon clockwise)
                                                    
 #define ACCEL_ZERO_G_OFFSET 0.0f                  //Value accelerometer returns with robot at rest (in G) - adjusts for any offset
+                                                  //H3LIS331 claims +/-1g DC offset - typical - but +/-2.5 has been observed at +/-400g setting (enough to cause tracking error)
                                                   //Just enterring and exiting config mode will automatically set this value / save to EEPROM (based on current accel reading reflecting 0g)
-                                                  //At highest G-range setting (+/-400g) LIS331 might have +/-2 G offset (enough to cause error)
-                                                  //For small-radius bots - try changing to LIS331 to +/-200g range for improved accuracy (accel_handler.cpp)
+                                                  //For small-radius bots - try changing to H3LIS331 to +/-200g range for improved accuracy (accel_handler.cpp)
 
 #define LEFT_RIGHT_HEADING_CONTROL_DIVISOR 1.0f   //How quick steering is (larger values = slower)
 
@@ -47,14 +48,14 @@
 #define MOTOR_PIN2 10                             //Pin for Motor 2 driver
 
 //THROTTLE_TYPE / High-speed PWM motor driver support:
-//Setting THROTTLE_TYPE to FIXED_PWM_THROTTLE or DYNAMIC_PWM_THROTTLE pulses 490hz PWM signal on motor drive pins at specified duty cycle (0-255)
+//Setting THROTTLE_TYPE to FIXED_PWM_THROTTLE or DYNAMIC_PWM_THROTTLE pulses 490Hz PWM signal on motor drive pins at specified duty cycle (0-255)
 //Can be used for 2 possible purposes:
-//  1. Used as control signal for a brushless ESC supporting high speed PWM (tested with Hobbypower 30A / "Simonk" firmware)
+//  1. Used as control signal for a brushless ESC supporting high speed (490Hz) PWM (tested with Hobbypower 30A / "Simonk" firmware)
+//          Assumes Arduino PWM output is 490Hz (such as Arduino Micro pins 9 and 10) - should be expected NOT to work with non-AVR Arduino's without changes
 //  2. 490hz signal maybe fed into a MOSFET or other on / off motor driver to control drive strength (relatively low frequency)
-//Assumes Arduino PWM output is 490hz (such as Arduino Micro pins 9 and 10) - should be expected NOT to work with non-AVR Arduino's without changes
 
 enum throttle_modes {
-  BINARY_THROTTLE,      //Motors pins are fully on/off - throttle controlled by portion of each rotation motor is on
+  BINARY_THROTTLE,      //Motors pins are fully on/off - throttle controlled by portion of each rotation motor is on (no PWM)
 
   FIXED_PWM_THROTTLE,   //Motors pins are PWM at PWM_MOTOR_ON, PWM_MOTOR_COAST or PWM_MOTOR_OFF
                         //throttle controlled by portion of each rotation motor is on

@@ -1,21 +1,20 @@
-renderBotBody = false;     //render the main shell or not
+renderBotBody = true;     //render the main shell or not
 renderLid = true;           //render the lid of not
 positionLidForPrint = true;  //if false - lid renders on top of the bot
 
-renderWeapon = false;
-renderWeaponPin = false;        
-
-renderMotor = true;
-renderWheel = true;
-
-//battery wall, weapon, electronics all have hard coded coordinates / sizes (need to tweak functions manually)
-renderElectronics = true;
+renderWeapon = true;
+renderWeaponPin = true;        
 
 includeWeaponMountHole = true;
 
 renderArduinoShelf = true;  //HARDCODED shelf for Arduino to make USB port accessable while installed in bot
 includeBatteryWall = true;     //parameters for this are HARDCODED
 makeTapHoles = true;
+
+//battery wall, weapon, electronics all have hard coded coordinates / sizes (need to tweak functions manually)
+renderElectronics = true;
+renderMotor = true;
+renderWheel = true;
 
 botHeight = 33;
 botDiameter = 138;
@@ -25,7 +24,7 @@ lidThickness = 1;
 
 motorDepthBelowFloorSurface = 5;    //motor mounts this deep below floor
 
-wheelDiameter = 56;   
+wheelDiameter = 44;   
 wheelWidth = 12.5;
 wheelDistanceFromMotorWall = 8;
 
@@ -46,7 +45,8 @@ weaponMountHoleDiameter = 12;
 weaponPinExtraLength = 5;
 weaponPinDiameterReduce = 1;  //reduces diameter of weapon pin to account for 3d printing kerf
 
-weaponVerticalExtension = 4;  //weapon extends this much above / below shell
+weaponTopVerticalExtension = 4;  //weapon extends this much above shell
+weaponBottomVerticalExtension = 2;  //weapon extends this much below shell
 weaponSlotExtraWidth= 0.75;  //increases width of weapon slot (mm) to account for 3d printing kerf
 weaponThickNess = 18;
 weaponWidth = 40;
@@ -241,11 +241,13 @@ module weapon(){
     difference() {
         translate ([0,(botDiameter * - 0.5) + weaponInset,(floorThickness - motorDepthBelowFloorSurface) + motorDiameter / 2])
         rotate ([90,0,0])
-        cube([weaponWidth,botHeight + weaponVerticalExtension * 2,weaponThickNess], center = true);
-        translate([0,0,weaponVerticalExtension * -1]) {
-            mainShell(botHeight + weaponVerticalExtension);
+        translate ([weaponWidth * -.5,(botHeight * -.5) - weaponBottomVerticalExtension,weaponThickNess * -.5])
 
-            translate([0,weaponSlotExtraWidth * -1, 0]) mainShell(botHeight + weaponVerticalExtension);
+        cube([weaponWidth,botHeight + weaponTopVerticalExtension + weaponBottomVerticalExtension, weaponThickNess], center = false);
+        translate([0,0,weaponBottomVerticalExtension * -1]) {
+            mainShell(botHeight + weaponBottomVerticalExtension);
+
+            translate([0,weaponSlotExtraWidth * -1, 0]) mainShell(botHeight + weaponBottomVerticalExtension);
         }
 
 

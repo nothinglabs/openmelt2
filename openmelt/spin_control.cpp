@@ -15,7 +15,7 @@
 
 #define ACCEL_MOUNT_RADIUS_MINIMUM_CM 0.2                 //Never allow interactive config to set below this value
 #define LEFT_RIGHT_CONFIG_RADIUS_ADJUST_DIVISOR 50.0f     //How quick accel. radius is adjusted in config mode (larger values = slower)
-#define LEFT_RIGHT_CONFIG_LED_ADJUST_DIVISOR 0.4f         //How quick LED heading is adjusted in config mode (larger values = slower)
+#define LEFT_RIGHT_CONFIG_LED_ADJUST_DIVISOR 0.1f         //How quick LED heading is adjusted in config mode (larger values = slower)
 
 #define MAX_TRANSLATION_ROTATION_INTERVAL_US (1.0f / MIN_TRANSLATION_RPM) * 60 * 1000 * 1000
 #define MAX_TRACKING_ROTATION_INTERVAL_US MAX_TRANSLATION_ROTATION_INTERVAL_US * 2   //don't track heading if we are this slow (also puts upper limit on time spent in melty loop for safety)
@@ -147,8 +147,8 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
       adjustment_factor = adjustment_factor / LEFT_RIGHT_CONFIG_LED_ADJUST_DIVISOR;
       led_offset_percent = led_offset_percent + adjustment_factor;
 
-      if (led_offset_percent > 100) led_offset_percent = 0;
-      if (led_offset_percent < 0) led_offset_percent = 100;
+      if (led_offset_percent > 99) led_offset_percent = 0;
+      if (led_offset_percent < 0) led_offset_percent = 99;
 
     }
   }    
@@ -177,7 +177,7 @@ static struct melty_parameters_t get_melty_parameters(void) {
   }
   #endif 
 
-  float led_on_portion = .4f * (1.1f - motor_on_portion);  //LED width changed with throttle percent
+  float led_on_portion = .4f * (1.1f - melty_parameters.throttle_percent);  //LED width changed with throttle percent
 
   melty_parameters.translate_forback = rc_get_forback();
 
