@@ -15,7 +15,7 @@ Version 2 of Open Melt is based on Arduino.
 Plans for a 3d-printed "antweight" (1lbs) combat robot are provided.
 
 
-##General Hardware Requirements
+## General Hardware Requirements
 
 - Arduino Micro (or other Atmega32u4 5v 16MHz Arduino)
 - [Adafruit HSLIS311 breakout](https://www.adafruit.com/product/4627)
@@ -35,8 +35,8 @@ Using an ARM-based Arduino has not been tested - but may be possible with code m
 
 The 4700uF capacitor is required across the 5v power bus to assure motor noise does not cause power fluctuations (and unwanted reboots).
 
-##Schematic
+## Schematic
 
-##Reference Platform
+## Reference Platform
 
-##Interactive Configuration
+## Interactive Configuration
