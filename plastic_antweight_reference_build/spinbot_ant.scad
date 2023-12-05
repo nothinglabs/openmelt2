@@ -252,7 +252,7 @@ module weapon(){
 
 
 
-        weaponMountHole();
+        if (includeWeaponMountHole) weaponMountHole();
     }
 }
 
