@@ -1,5 +1,4 @@
 //this module handles interfacing to the motors
-//current version just does pin on/off (kept separate so PWM support can be easily added)
 
 #include "arduino.h"
 #include "melty_config.h"

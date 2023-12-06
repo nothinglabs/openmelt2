@@ -82,7 +82,7 @@ Open Melt supports a few different configurations to control throttle / rotation
 
 ## Schematic
 
-<a href="./schematic.jpg"><img src="./images/schematic.jpg" alt="drawing" width="600"/></a>
+<img src="./openmelt_schematic/schematic.jpg" alt="drawing" width="600"/>
 
 ## Reference Platform
 
