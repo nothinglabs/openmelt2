@@ -49,7 +49,7 @@ In a 1 wheel robot - the unsupported end scrapes the ground during spin-up - but
 
 In some 1 wheel robots - oscillation / bouncing has been observed at higher speeds - which can reduce translational control.  This phenomena is not fully understood - but may be caused by too-soft wheels deforming / shifting off the center of the hub.  Conversely - harder wheels may cause this problem when they bounce off imperfections in the floor.  
 
-Robots with lower ground clearance seem to experience this problem less.  The reference platform is fairly stable up to about 2800rpm.
+Robots with lower ground clearance seem to experience this problem less.  The antweight reference platform is fairly stable up to about 2800rpm.
 
 2 wheel designs seem less prone to these issues (but are not as cool looking).
 
@@ -66,7 +66,7 @@ Open Melt can generate either a simple on / off motor signal - or provide a 0-10
 
 Either kind of signal may be fed directly to a MOSFET or motor controller that accepts 5v logic-level input.
 
-The reference platform uses a RFP30N06LE N-Channel MOSFET.
+The antweight reference platform uses a RFP30N06LE N-Channel MOSFET.
 
 Brushless RC motor controllers that support high-speed 490Hz PWM may work with Open Melt.  A "Hobbypower 30a" brushless controller running the [SimonK firmware](https://github.com/sim-/tgy) has been tested and found to work.  Other controllers running SimonK firmware may also work.
 
@@ -84,18 +84,19 @@ Selecting an LED with a wide viewing angle will help maximize visibility.
 
 ## Schematic / Supporting Components
 
-A 10:1 voltage divider is implemented using 2 resistors for measuring battery voltage.
+A 10:1 voltage divider is implemented using 2 resistors to allow measuring battery voltage from the Arduino.
 
 The 4700uF capacitor is required across the 5v power bus to assure motor noise does not cause power fluctuations (and unwanted reboots).
 
-If using a MOSFET - an appropriately sized Schottky diode *must* be installed across the motor leads. 
+If using a MOSFET for motor control - an appropriately sized Schottky diode *must* be installed across the motor leads. 
 
 The receiver and accelerometer are powered via the Arduino's 5v regulator (rated 7-12v input).  Practically - this seems to work well enough with either a 7.4 or 11.1v LiPo battery.  For higher voltages - a dedicated voltage regulator should be used.
 
-<img src="./openmelt_schematic/schematic.jpg" alt="drawing" width="600"/>
+<p align="center">
+<img src="./openmelt_schematic/schematic.jpg" alt="drawing" width="700"/>
 
-
-<img src="./images/internals_labelled.jpg" alt="drawing" width="600"/>
+<img src="./images/internals_labelled.jpg" alt="drawing" width="700"/>
+</p>
 
 ## Remote Control
 Open Melt is controlled using a standard hobby RC control system.  3-channels are required (throttle, forward-back and left-right).
@@ -110,14 +111,14 @@ The [FlySky i6 transmitter ](https://www.flysky-cn.com/i6-gaishu) and [FlySky iA
 
 A few mechanisms are implemented with the intent of improving safety.
 
-If no RC updates are received for ~1 second - the robot should spin down.
-
 A [watchdog timer](https://github.com/adafruit/Adafruit_SleepyDog) is used - so if the code unexpectedly becomes trapped - the Arduino should reboot (and the robot should enter an unpowered state).
 
 At boot-up - it is verified that the RC signal is both good - and that the throttle is at 0% for ~1 second.  This means that if the robot reboots unexpectedly - it can not be spun up again until the driver lowers the throttle for ~1 second.  This behavior may be disabled (see melty_config.h).
 
+If no RC updates are received on the throttle channel for ~1 second - the robot should spin down.  It will resume operation when the RC signal is restored **(0% throttle is not required)**.
+
 It should be noted that MOSFET drivers can fail in a "closed" state.  This means that they will drive the motor until the battery runs out.
 
 
-## Users Guide
+## User Guide / Demo Videos
  - Work in progress...
