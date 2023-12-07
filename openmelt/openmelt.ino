@@ -146,9 +146,9 @@ void loop() {
     service_watchdog();
     motors_off();
     heading_led_on(0);
-    delay(50);
+    delay(30);
     heading_led_off();
-    delay(400);
+    delay(600);
   }
 
   //if RC is good - and throtte is above 0 - spin a single rotation (repeat as needed...)
@@ -162,17 +162,18 @@ void loop() {
     motors_off();
     
     //"fast" idle flash - indicates RC signal is good while sitting idle
-    delay(20);
+    delay(150);
     heading_led_on(0);
-    delay(40);
+    delay(30);
     heading_led_off();
 
     //extra delay adjusts flashing pattern to let user know bot is in config mode
     if (get_config_mode() == 1) {
-      delay(200);
+      delay(75);
       heading_led_on(0);
-      delay(20);
+      delay(70);
       heading_led_off();
+      delay(70);
     }
 
     check_config_mode();

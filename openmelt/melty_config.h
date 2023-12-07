@@ -53,6 +53,7 @@
 //  1. Used as control signal for a brushless ESC supporting high speed (490Hz) PWM (tested with Hobbypower 30A / "Simonk" firmware)
 //          Assumes Arduino PWM output is 490Hz (such as Arduino Micro pins 9 and 10) - should be expected NOT to work with non-AVR Arduino's without changes
 //  2. 490hz signal maybe fed into a MOSFET or other on / off motor driver to control drive strength (relatively low frequency)
+//Thanks to Richard Wong for his research in implementing brushless ESC support
 
 enum throttle_modes {
   BINARY_THROTTLE,      //Motors pins are fully on/off - throttle controlled by portion of each rotation motor is on (no PWM)
@@ -93,5 +94,5 @@ enum throttle_modes {
 #define VERIFY_RC_THROTTLE_ZERO_AT_BOOT           //Requires RC throttle be 0% at boot to allow spin-up for duration of MAX_MS_BETWEEN_RC_UPDATES (about 1 second)
                                                   //Intended as safety feature to prevent bot from spinning up at power-on if RC was inadvertently left on.
                                                   //Downside is if unexpected reboot occurs during a fight - driver will need to set throttle to zero before power 
-                                                  
+
 #endif

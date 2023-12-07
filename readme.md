@@ -1,6 +1,6 @@
 # Open Melt 2
 
-Open Melt is an open-source translational drift (aka "melty brain") robot controller project.  
+Open Melt 2 is an open-source translational drift (aka "melty brain") robot controller project based on Arduino.  
 
 A translational drift robot spins its entire body using its drive wheel(s), but is still capable of directional control by modulating motor power at certain points each rotation.  To achieve this - the rate of rotation must be tracked.
 
@@ -16,6 +16,8 @@ Open Melt uses an accelerometer to calculate the rate of rotation based on G-for
 An LED is turned on once per rotation - giving the appearance of the "front" of the robot.  This allows the driver to see the expected direction of translation.  The user can adjust the heading beacon by moving the remote control left or right.  This also allows for steering and correction of minor tracking errors.
 
 This system can work with robots using either one or two drive motors.
+
+Open Melt is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.
 
 #### For a complete parts list, 3d print files and build notes see the ["antweight reference platform"](./antweight_reference_platform/).
 
@@ -51,7 +53,7 @@ In some 1 wheel robots - oscillation / bouncing has been observed at higher spee
 
 Robots with lower ground clearance seem to experience this problem less.  The antweight reference platform is fairly stable up to about 2800rpm.
 
-2 wheel designs seem less prone to these issues (but are not as cool looking).
+2 wheel designs seem less prone to these issues (but are slightly less cool looking).
 
 ## Accelerometer Placement
 The accelerometer must be positioned so that it experiences no more than 400g at the robot's anticipated max rotation speed. A [centrifuge calculator](https://druckerdiagnostics.com/g-force-calculator/) may be used to determine this.
@@ -105,6 +107,7 @@ Be sure to choose a receiver that supports fail-safe and is configured to set th
 
 The [FlySky i6 transmitter ](https://www.flysky-cn.com/i6-gaishu) and [FlySky iA6 receiver](https://www.flysky-cn.com/ia6-canshu) are inexpensive options that work well (and support fail-safe).
 
+
 ## Safety / Disclaimer
 
 **Building and operating a robot of this type, even in smaller versions, is inherently dangerous. By choosing to use the provided code and plans, you acknowledge the risks involved.  The creator of these plans cannot be held responsible for any injuries, damages, or losses that may result from the use of this project.**
@@ -119,6 +122,12 @@ If no RC updates are received on the throttle channel for ~1 second - the robot 
 
 It should be noted that MOSFET drivers can fail in a "closed" state.  This means that they will drive the motor until the battery runs out.
 
-
 ## User Guide / Demo Videos
- - Work in progress...
+Coming soon...
+
+
+
+For information on Open Melt version 1 - [see here](https://github.com/nothinglabs/openmelt).
+
+
+ 
