@@ -18,6 +18,18 @@ void service_watchdog() {
 #endif
 }
 
+
+void wait_for_rc_good_and_zero_throttle() {
+    while (rc_signal_is_healthy() != RC_SIGNAL_GOOD || rc_get_throttle_percent() > 0) {
+      service_watchdog();
+      heading_led_on(0);
+      delay(250);
+      heading_led_off();
+      delay(250);
+  }
+}
+  
+
 void setup() {
   
   Serial.begin(115200);
@@ -26,13 +38,6 @@ void setup() {
   init_motors();
   init_led();
 
-  //do a little pulse at boot-up to make it clear we booted  
-  for (int x = 0; x < 5; x++) {
-    heading_led_on(0);
-    delay(250);
-    heading_led_off();
-    delay(250);
-  }
 
 #ifdef ENABLE_WATCHDOG
     //returns actual watchdog timeout MS
@@ -53,6 +58,16 @@ void setup() {
     diagnostic_loop();
     delay(250);   //delay prevents serial from getting flooded (can cause issues programming)
   }
+#endif
+
+//1. Wait for good RC signal at zero throttle
+//2. Wait for first RC signal to have expired
+//3. Verify RC signal is still good / zero throttle
+
+#ifdef VERIFY_RC_THROTTLE_ZERO_AT_BOOT 
+  wait_for_rc_good_and_zero_throttle();
+  delay(MAX_MS_BETWEEN_RC_UPDATES + 1);
+  wait_for_rc_good_and_zero_throttle();
 #endif
 
 }
@@ -119,6 +134,7 @@ void check_config_mode() {
     }
   }    
 }
+
 
 
 void loop() {

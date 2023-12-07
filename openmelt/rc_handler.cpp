@@ -79,12 +79,11 @@ void update_rc_channel(struct rc_channel_t *rc_channel) {
 //recent that MAX_MS_BETWEEN_RC_UPDATES
 int rc_signal_is_healthy() {
   
+  //initial signal not received
+  if (throttle_rc_channel.last_good_signal == 0) return RC_SIGNAL_BAD;
+
   if (millis() - throttle_rc_channel.last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
   
-  //just verifiying throttle OK
-  //if (micros() - leftright_rc_channel.last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
-  //if (micros() - forback_rc_channel.last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
-
   return RC_SIGNAL_GOOD;
 }
 

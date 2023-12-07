@@ -1,3 +1,5 @@
+weaponPartOfBody = true;   //render the weapon and the body together
+
 renderBotBody = true;     //render the main shell or not
 renderLid = true;           //render the lid of not
 positionLidForPrint = true;  //if false - lid renders on top of the bot
@@ -5,7 +7,7 @@ positionLidForPrint = true;  //if false - lid renders on top of the bot
 renderWeapon = true;
 renderWeaponPin = true;        
 
-includeWeaponMountHole = true;
+includeWeaponMountHole = weaponPartOfBody ? false : true;
 
 renderArduinoShelf = true;  //HARDCODED shelf for Arduino to make USB port accessable while installed in bot
 includeBatteryWall = true;     //parameters for this are HARDCODED
@@ -45,10 +47,10 @@ weaponMountHoleDiameter = 12;
 weaponPinExtraLength = 5;
 weaponPinDiameterReduce = 1;  //reduces diameter of weapon pin to account for 3d printing kerf
 
-weaponTopVerticalExtension = 4;  //weapon extends this much above shell
-weaponBottomVerticalExtension = 2;  //weapon extends this much below shell
-weaponSlotExtraWidth= 0.75;  //increases width of weapon slot (mm) to account for 3d printing kerf
-weaponThickNess = 18;
+weaponTopVerticalExtension = weaponPartOfBody ? 0 : 4;  //weapon extends this much above shell
+weaponBottomVerticalExtension = weaponPartOfBody ? 0 : 1.5;  //weapon extends this much below shell
+weaponSlotExtraWidth = weaponPartOfBody ? 0 : 1.0;  //increases width of weapon slot (mm) to account for 3d printing kerf
+weaponThickNess = 19;
 weaponWidth = 40;
 weaponInset = 2;
 
@@ -75,7 +77,7 @@ if (renderLid) lid();
 
 if (renderWeapon) weapon();
 
-if (renderWeaponPin) weaponPin();
+if (renderWeaponPin && !weaponPartOfBody) weaponPin();
 
 if (renderBotBody) {
 

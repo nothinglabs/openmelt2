@@ -90,4 +90,8 @@ enum throttle_modes {
 #define ARDUINIO_VOLTAGE 5.0f                     //Needed for ADC maths for battery monitor
 #define LOW_BAT_REPEAT_READS_BEFORE_ALARM 10      //Requires this many ADC reads below threshold before alarming
 
+#define VERIFY_RC_THROTTLE_ZERO_AT_BOOT           //Requires RC throttle be 0% at boot to allow spin-up for duration of MAX_MS_BETWEEN_RC_UPDATES (about 1 second)
+                                                  //Intended as safety feature to prevent bot from spinning up at power-on if RC was inadvertently left on.
+                                                  //Downside is if unexpected reboot occurs during a fight - driver will need to set throttle to zero before power 
+                                                  
 #endif
