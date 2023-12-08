@@ -6,20 +6,22 @@ A translational drift robot spins its entire body using its drive wheel(s), but 
 
 <div align="center">
 <table class="center"><tr><td align="center">
-<a href="./antweight_reference_platform/"><img src="./images/plastic_ant.jpg" alt="drawing" width="230"/><br>Antweight Reference Platform</a</td>
+<a href="./antweight_reference_platform/"><img src="./images/plastic_ant.jpg" alt="drawing" width="320"/><br>Antweight Reference Platform</a</td>
 <td valign="center"><img src="./images/rcf_equation.png" alt="drawing" width="250"/></td>
 <td align="center"><img src="./images/melt_demo.gif" alt="drawing" width="320"/><br>~2300rpm</td>
 </td></tr></table></div>
 
 Open Melt uses an accelerometer to calculate the rate of rotation based on G-forces around a given radius (centrifugal force).  For example - an accelerometer mounted 4cm from the center of rotation experiencing 145g can be [calculated](https://druckerdiagnostics.com/g-force-calculator/) to indicate 1800rpm rotation.
 
-An LED is turned on once per rotation - giving the appearance of the "front" of the robot.  This allows the driver to see the expected direction of translation.  The user can adjust the heading beacon by moving the remote control left or right.  This also allows for steering and correction of minor tracking errors.
+An LED is turned on once per rotation - giving the appearance of the "front" of the robot.  This lets the driver see the expected direction of translation.  The user can adjust the heading beacon by moving the remote control left or right.  This allows for steering and correction of minor tracking errors.
 
-This system can work with robots using either one or two drive motors.
+The system can work with robots using either one or two drive motors.
+
+It has been tested up to 3200rpm - and can likely work at higher speeds.
 
 Open Melt is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.
 
-#### For a complete parts list, 3d print files and build notes see the ["antweight reference platform"](./antweight_reference_platform/).
+#### For a complete parts list, 3d print files and build notes see the [antweight reference platform](./antweight_reference_platform/).
 
 
 ## General Hardware Requirements
@@ -37,7 +39,7 @@ Use of an **Atmega328-based Arduino is not supported** due to lack of adequate i
   
 
 ## 1 vs. 2 Wheels
-Open Melt generates signals for 2 motors independent of how many are connected.  There are no configuration changes needed. Motor 2 is powered for the same portion of each rotation as motor 1 (trailing 180 degrees out of phase).
+Open Melt generates signals for 2 motors independent of how many are connected.  Motor 2 is powered for the same portion of each rotation as motor 1 (trailing 180 degrees out of phase).
 
 <div align="center">
 <table class="center"><tr><td>
@@ -50,6 +52,8 @@ Open Melt generates signals for 2 motors independent of how many are connected. 
 In a 1 wheel robot - the unsupported end scrapes the ground during spin-up - but then levitates when it reaches speed.  
 
 In some 1 wheel robots - oscillation / bouncing has been observed at higher speeds - which can reduce translational control.  This phenomena is not fully understood - but may be caused by too-soft wheels deforming / shifting off the center of the hub.  Conversely - harder wheels may cause this problem when they bounce off imperfections in the floor.  
+
+Oscillation may also be a function of some kind of resonance effect.
 
 Robots with lower ground clearance seem to experience this problem less.  The antweight reference platform is fairly stable up to about 2800rpm.
 
@@ -72,7 +76,7 @@ The antweight reference platform uses a RFP30N06LE N-Channel MOSFET.
 
 Open Melt supports a few different throttle configurations - see [melty_config.h](openmelt/melty_config.h) for details.
 
-In the default BINARY\_THROTTLE mode - the throttle directly relates to what portion of each rotation the motor(s) are (fully) powered for.  For example - at 50% throttle the motors would be powered for 180 degrees of each rotation.  At higher throttle settings translation is reduced (with no translation at 100%).
+In the default BINARY\_THROTTLE mode - the throttle level determines what portion of each rotation the motor(s) are powered (fully) on for.  For example - at 50% throttle the motors would be powered for 180 degrees of each rotation.  At higher throttle settings translation is reduced (with no translation at 100%).
 
 When no forward or back translation is desired - the portion of the rotation that is powered is constantly cycled 180 degrees (cancelling out any translational drift).  
 
@@ -81,21 +85,21 @@ Brushless RC motor controllers that support high-speed 490Hz PWM may work with O
 
 ## Heading LED
 
-The heading LED should installed at a location along the perimeter of the robot where it can be viewed at any angle while driving.  Open Melt's interactive configuration can adjust for any placement.
+The heading LED should installed at a location along the perimeter of the robot where it can be viewed at any angle while being driven.  Open Melt's interactive configuration can adjust for any placement.
 
-The [Arduino Micro is capable of 20ma per I/O pin](https://store.arduino.cc/products/arduino-micro#:~:text=Each%20pin%20can%20provide%20or,permanent%20damage%20to%20the%20microcontroller) - so a resistor must be used to limit LED current.  The 100ohm resistor in the schematic is a good value for blue LEDs.  Values for other color LEDs may be determined using an [LED Series Resistor Calculator](https://www.digikey.com/en/resources/conversion-calculators/conversion-calculator-led-series-resistor).
+The [Arduino Micro is capable of 20ma per I/O pin](https://store.arduino.cc/products/arduino-micro#:~:text=Each%20pin%20can%20provide%20or,permanent%20damage%20to%20the%20microcontroller) - so a resistor must be used to limit LED current.  The 100ohm resistor in the schematic is a good value for blue LEDs.  Values for other color LEDs may be determined using a [LED Series Resistor Calculator](https://www.digikey.com/en/resources/conversion-calculators/conversion-calculator-led-series-resistor).
 
 Selecting an LED with a wide viewing angle will help maximize visibility.
 
-20ma is surprisingly bright - but if you need better visibility - a larger LED may be driven using a MOSFET.
+An LED driven at 20ma can be surprisingly bright.  If you need better visibility - a larger LED may be driven using a MOSFET.
 
 ## Schematic / Supporting Components
 
-A 10:1 voltage divider is implemented using 2 resistors to allow measuring battery voltage from the Arduino.
+A 10:1 voltage divider is implemented using 2 resistors to allow measuring battery voltage by the Arduino.
 
 The 4700uF capacitor is required across the 5v power bus to assure motor noise does not cause power fluctuations (and unwanted reboots).
 
-If using a MOSFET for motor control - an appropriately sized Schottky diode *must* be installed across the motor leads. 
+If using a MOSFET for motor control - an appropriately sized Schottky diode **must** be installed across the motor leads. 
 
 The receiver and accelerometer are powered via the Arduino's 5v regulator (rated 7-12v input).  Practically - this seems to work well enough with either a 7.4 or 11.1v LiPo battery.  For higher voltages - a dedicated voltage regulator should be used.
 
@@ -129,7 +133,8 @@ It should be noted that MOSFET drivers can fail in a "closed" state.  This means
 
 ## User Guide
 
-### Spun-Down Status LED
+### Stationary Status LED
+When sitting idle - the robot will flash one of the following patterns:
 <table>
 <tr><td>Waiting for Initial RC Signal (0% Throttle Required)</td><td>Slow On / Off</td></tr>
 <tr><td>RC Signal Lost</td><td>Slow Flash</td></tr>
@@ -170,23 +175,23 @@ Throttle settings of over 50% tend to increase rotation speed at expense of tran
 
 The width of the LED beacon grows and shrinks proportionate to the throttle.  It roughly indicates what portion of each rotation the robot is powered for.
 
-If the robot is not tracking perfectly - minor adjustments may be made using your RC radio left/right trim (the math is done in a way that adjustments should stay stable even as rotation speed changes).  
+If the robot is not tracking perfectly - minor adjustments may be made using your RC radio left/right trim.  The math is done in a way so that trim adjustments should stay stable even as rotation speed changes.  
 
 ### Low Battery Warning
-If low voltage is detected - the LED beacon will have a shimmering effect.  See [melty_config.h](openmelt/melty_config.h) for battery monitor settings.
+If low voltage is detected - the LED beacon will display a shimmering / pulsing effect.  See [melty_config.h](openmelt/melty_config.h) for battery monitor settings.
 
 ### Max RPM Report
-While spun-down - push the control stick forward for ~1 second.  This will cause the robot to flash out the highest RPM observed (since last boot-up) in multiples of 100.  For example 23 flashes = 2300rpm.
+While spun-down - push the control stick forward for ~1 second.  This will cause the robot to flash out the highest RPM observed in multiples of 100.  For example 23 flashes = 2300rpm.
 
 Entering / exiting config mode will cause this number to be reset to 0.
 
 
 ## Troubleshooting
-When throttle is at 0% - Open Melt will log out diagnostics data (RC data, accelerometer status, configuration parameters, etc.) via serial USB.
+When throttle is at 0% - Open Melt will log out diagnostics data (RC data, accelerometer status, configuration parameters, etc.) via serial USB.  This may be viewed by using Arduino's "Serial Monitor" (115kbps).
 
-Please note - connecting the Arduino to USB may put it in an unexpected state - **which could cause the motor(s) to spin up**.  Only connect your Arduino to USB if the battery powering the motor is disconnected.
+Note: Connecting the Arduino to USB may put it in an unexpected state - **which could cause the motor(s) to spin up**.  Only connect your Arduino to USB if the battery powering the motor is disconnected.
 
-
+***
 
 #### For info on Open Melt version 1 (obsolete!) - [see here](https://github.com/nothinglabs/openmelt).
 
