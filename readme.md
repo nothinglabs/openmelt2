@@ -6,9 +6,9 @@ A translational drift robot spins its entire body using its drive wheel(s), but 
 
 <div align="center">
 <table class="center"><tr><td align="center">
-<a href="./antweight_reference_platform/"><img src="./images/plastic_ant.jpg" alt="drawing" width="320"/><br>Antweight Reference Platform</a</td>
+<a href="./antweight_reference_platform/"><img src="./images/plastic_ant.jpg" alt="drawing" width="280"/><br>Antweight Reference Platform</a</td>
 <td valign="center"><img src="./images/rcf_equation.png" alt="drawing" width="250"/></td>
-<td align="center"><img src="./images/melt_demo.gif" alt="drawing" width="320"/><br>~2300rpm</td>
+<td align="center"><img src="./images/melt_demo.gif" alt="drawing" width="280"/><br>~2300rpm</td>
 </td></tr></table></div>
 
 Open Melt uses an accelerometer to calculate the rate of rotation based on G-forces around a given radius (centrifugal force).  For example - an accelerometer mounted 4cm from the center of rotation experiencing 145g can be [calculated](https://druckerdiagnostics.com/g-force-calculator/) to indicate 1800rpm rotation.
@@ -43,10 +43,10 @@ Open Melt generates signals for 2 motors independent of how many are connected. 
 
 <div align="center">
 <table class="center"><tr><td>
-<img src="./images/1wheel.gif" alt="drawing" width="230"/></td>
-<td><img src="./images/bounce.gif" alt="drawing" width="230"/></td>
+<img src="./images/1wheel.gif" alt="drawing" width="200"/></td>
+<td><img src="./images/bounce.gif" alt="drawing" width="200"/></td>
 
-<td><img src="./images/mbfinal.jpg" alt="drawing" width="230"/></td>
+<td><img src="./images/mbfinal.jpg" alt="drawing" width="200"/></td>
 </td></tr></table></div>
 
 In a 1 wheel robot - the unsupported end scrapes the ground during spin-up - but then levitates when it reaches speed.  
