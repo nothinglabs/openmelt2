@@ -17,7 +17,7 @@ An LED is turned on once per rotation - giving the appearance of the "front" of 
 
 The system can work with robots using either one or two drive motors.
 
-It has been tested up to 3200rpm - and can likely work at higher speeds.
+It has been tested up to 3200rpm - and can likely work at significantly higher speeds.
 
 Open Melt is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.
 
@@ -139,7 +139,7 @@ When sitting idle - the robot will flash one of the following patterns:
 <tr><td>Waiting for Initial RC Signal (0% Throttle Required)</td><td>Slow On / Off</td></tr>
 <tr><td>RC Signal Lost</td><td>Slow Flash</td></tr>
 <tr><td>RC Good / Ready to Spin-up</td><td>Fast Flash</td></tr>
-<tr><td>Configuration Mode</td><td>Fast Double-Flash</td></tr>
+<tr><td>Configuration Mode</td><td>Double-Flash</td></tr>
 </table>
 
 ### Configuration Mode
@@ -148,7 +148,9 @@ Configuration mode allows interactive setting of correct rotation radius and LED
 
 Configuration mode can be entered by pulling the control stick toward the back - and holding it there for ~1 second.
 
-To exit configuration mode - pull the throttle to the back for ~1 second again.  Any changes to configuration will be saved to EEPROM.
+Do not enter configuration mode if the robot is still spinning-down.  Doing so will result in an incorrect accelerometer 0g offset.
+
+To exit configuration mode - pull the throttle to the back for ~1 second again.  Changes to configuration are saved to EEPROM on exit.
 
 ### Configuring Tracking Adjustment (radius of rotation)
 
@@ -158,15 +160,15 @@ With the control stick in the neutral forward-back position - move the stick lef
 
 Moving the control stick forward will attempt to move the robot forward to test translation.  Moving the stick left / right will steer the robot as it's moving.  
 
-(Moving the robot in reverse isn't supported in configuration mode - try not to drive into a corner...)
-
 ### Configuring Heading Adjustment (LED offset)
 
 If the robot tracks consistently - but forward movement is offset from the LED's position - the LED offset needs to be adjusted.
 
-With the robot spinning - pull the control stick back.  Then move the stick to the right or left.  The LED will shimmer to indicate that the LED offset is being changed.
+With the robot spinning - pull the control stick back.  This will cause the robot to translate in the direction it thinks is backwards based on the current heading configuration.
 
-Now - try moving the robot forward again.  Repeat this process until you are satisfied with the LED heading.  This will likely take several attempts.
+While moving backwards - move the control stick to the right or left.  The LED will shimmer to indicate that the LED offset is being changed.
+
+Now - try moving the robot forward again.  Repeat this process until the robot moves forward and back in alignment with the LED beacon.  This will likely take several attempts.
 
 ### Driving
 Once configured properly - Open Melt drives (mostly) like a regular robot.  Increase throttle to spin-up.  Once spinning - the control stick controls left/right tracking - and forward/back translation.
@@ -179,6 +181,8 @@ If the robot is not tracking perfectly - minor adjustments may be made using you
 
 ### Low Battery Warning
 If low voltage is detected - the LED beacon will display a shimmering / pulsing effect.  See [melty_config.h](openmelt/melty_config.h) for battery monitor settings.
+
+This the same shimmering effect used in configuration mode.  To avoid confusion - be sure to have a fully charged battery when using configuration mode.
 
 ### Max RPM Report
 While spun-down - push the control stick forward for ~1 second.  This will cause the robot to flash out the highest RPM observed in multiples of 100.  For example 23 flashes = 2300rpm.

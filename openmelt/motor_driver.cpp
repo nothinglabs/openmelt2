@@ -43,7 +43,7 @@ void motor_coast(int motor_pin) {
     analogWrite(motor_pin, PWM_MOTOR_COAST);
   }
   if (THROTTLE_TYPE == BINARY_THROTTLE) {
-      digitalWrite(motor_pin, LOW);  //same as "off" for brushed motors
+    digitalWrite(motor_pin, LOW);  //same as "off" for brushed motors
   }
 }
 

@@ -1,6 +1,5 @@
 //All pulse lengths in microseconds
-//it's accepted that a TX with fully centered trims
-//may produce values somewhat off these numbers
+//it's accepted that a TX with fully centered trims may produce values somewhat off these numbers
 
 //RC pulses outside this range are considered invalid (indicate a bad RC signal)
 #define MAX_RC_PULSE_LENGTH 2400

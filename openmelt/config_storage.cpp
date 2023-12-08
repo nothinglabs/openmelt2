@@ -1,4 +1,4 @@
-//handles persistent storage of melty brain config (accelerometer radius and LED offset)
+//handles persistent storage of melty brain config (accelerometer radius, LED offset and accelerometer 0g offset)
 //this code (unfortunately) depends on the AVR-specific EEPROM library:
 //https://docs.arduino.cc/learn/built-in-libraries/eeprom
 

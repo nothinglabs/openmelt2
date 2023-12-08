@@ -18,13 +18,12 @@ void service_watchdog() {
 #endif
 }
 
-
 void wait_for_rc_good_and_zero_throttle() {
     while (rc_signal_is_healthy() != RC_SIGNAL_GOOD || rc_get_throttle_percent() > 0) {
-      heading_led_on(0);
-      delay(250);
-      heading_led_off();
-      delay(250);
+      
+      //"slow on/off" for LED while waiting for signal
+      heading_led_on(0); delay(250);
+      heading_led_off(); delay(250);
       
       //services watchdog and echo diagnostics while we are waiting for RC signal
       service_watchdog();
@@ -41,10 +40,9 @@ void setup() {
   init_motors();
   init_led();
 
-
 #ifdef ENABLE_WATCHDOG
-    //returns actual watchdog timeout MS
-    int watchdog_ms = Watchdog.enable(WATCH_DOG_TIMEOUT_MS);
+  //returns actual watchdog timeout MS
+  int watchdog_ms = Watchdog.enable(WATCH_DOG_TIMEOUT_MS);
 #endif
 
   init_rc();
@@ -63,14 +61,10 @@ void setup() {
   }
 #endif
 
-//1. Wait for good RC signal at zero throttle
-//2. Wait for first RC signal to have expired
-//3. Verify RC signal is still good / zero throttle
-
 #ifdef VERIFY_RC_THROTTLE_ZERO_AT_BOOT 
-  wait_for_rc_good_and_zero_throttle();
-  delay(MAX_MS_BETWEEN_RC_UPDATES + 1);
-  wait_for_rc_good_and_zero_throttle();
+  wait_for_rc_good_and_zero_throttle();     //Wait for good RC signal at zero throttle
+  delay(MAX_MS_BETWEEN_RC_UPDATES + 1);     //Wait for first RC signal to have expired
+  wait_for_rc_good_and_zero_throttle();     //Verify RC signal is still good / zero throttle
 #endif
 
 }
@@ -78,35 +72,21 @@ void setup() {
 //dumps out diagnostics info
 void echo_diagnostics() {
 
+  Serial.print("Raw Accel G: "); Serial.print(get_accel_force_g());
+  Serial.print("  RC Health: "); Serial.print(rc_signal_is_healthy());
+  Serial.print("  RC Throttle: "); Serial.print(rc_get_throttle_percent());
+  Serial.print("  RC L/R: "); Serial.print(rc_get_leftright());
+  Serial.print("  RC F/B: "); Serial.println(rc_get_forback());
+
 #ifdef BATTERY_ALERT_ENABLED
-  Serial.print("  Battery Voltage: ");
-  Serial.print(get_battery_voltage());
+  Serial.print("  Battery Voltage: "); Serial.print(get_battery_voltage());
 #endif 
   
 #ifdef ENABLE_EEPROM_STORAGE  
-  Serial.print("  Accel Radius: ");
-  Serial.print(load_accel_mount_radius());
-  Serial.print("  Heading Offset: ");
-  Serial.print(load_heading_led_offset());
-  Serial.print("  Zero G Offset: ");
-  Serial.print(load_accel_zero_g_offset());
-
+  Serial.print("  Accel Radius: "); Serial.print(load_accel_mount_radius());
+  Serial.print("  Heading Offset: "); Serial.print(load_heading_led_offset());
+  Serial.print("  Zero G Offset: "); Serial.print(load_accel_zero_g_offset());
 #endif  
-
-  Serial.print("  Raw Accel G: ");
-  Serial.print(get_accel_force_g());
-
-  Serial.print("  Battery V: ");
-  Serial.print(get_battery_voltage());
-
-  Serial.print("  RC Health: ");
-  Serial.print(rc_signal_is_healthy());
-  Serial.print("  RC Throttle: ");
-  Serial.print(rc_get_throttle_percent());
-  Serial.print("  RC L/R: ");
-  Serial.print(rc_get_leftright());
-  Serial.print("  RC F/B: ");
-  Serial.println(rc_get_forback());
   
 }
 
@@ -114,16 +94,16 @@ void display_rpm_if_requested() {
 //if user pushes control stick up / holds for 750ms - flashes out top speed (100's of RPMs)
   if (rc_get_forback() == RC_FORBACK_FORWARD) {
     delay(750);
-     //prevent accidental entry into RPM flash / throttle up cancels RPM count
+     //verify throttle at zero to prevent accidental entry into RPM flash
     if (rc_get_forback() == RC_FORBACK_FORWARD && rc_get_throttle_percent() == 0) {
+       
+      //throttle up cancels RPM count
       for (int x = 0; x < get_max_rpm() && rc_get_throttle_percent() == 0; x = x + 100) {
         service_watchdog();   //flashing out RPM can take a while - need to assure watchdog doesn't trigger
-        delay(600);
-        heading_led_on(0);
-        delay(20);
-        heading_led_off();
+        delay(600); heading_led_on(0);
+        delay(20); heading_led_off();
       }
-      delay(1200);
+      delay(1500);  //flash-out punctuated with delay to make clear RPM count has completed
     }
   }
 }
@@ -139,22 +119,44 @@ void check_config_mode() {
   }    
 }
 
+//handles the bot when not spinning (with RC good)
+void handle_bot_idle() {
+
+    //assure motors are off
+    motors_off();
+    
+    //normal LED "fast flash" - indicates RC signal is good while sitting idle
+    heading_led_on(0); delay(30);
+    heading_led_off(); delay(200);
+
+    //If in config mode blip LED again to show "double-flash" 
+    if (get_config_mode() == 1) {
+      heading_led_off(); delay(100);
+      heading_led_on(0); delay(30);
+      heading_led_off(); delay(80);
+    }
+
+    check_config_mode();          //check if user requests we enter / exit config mode
+    display_rpm_if_requested();
+
+    //echo diagnostics if bot is idle
+    echo_diagnostics();
+}
 
 //main control loop
 void loop() {
 
-    service_watchdog();
+  service_watchdog();
 
-//if the rc signal isn't good - set motors off - and cycle slow LED pulse
-//this will interrupt  a spun-up bot if the signal becomes bad
+//if the rc signal isn't good - assure motors off - and "slow flash" LED
+//this will interrupt a spun-up bot if the signal becomes bad
   while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
     motors_off();
-    heading_led_on(0);
-    delay(30);
-    heading_led_off();
-    delay(600);
     
-      //services watchdog and echo diagnostics while we are waiting for RC signal
+    heading_led_on(0); delay(30);
+    heading_led_off(); delay(600);
+    
+    //services watchdog and echo diagnostics while we are waiting for RC signal
     service_watchdog();
     echo_diagnostics();
   }
@@ -163,33 +165,8 @@ void loop() {
   if (rc_get_throttle_percent() > 0) {
      //this is where all the motor control happens!  (see spin_control.cpp)
     spin_one_rotation();  
-  } else {
-    
-    //if we aren't spinning....
-
-    //assure motors are off
-    motors_off();
-    
-    //normal LED "fast flash" - indicates RC signal is good while sitting idle
-    delay(150);
-    heading_led_on(0);
-    delay(30);
-    heading_led_off();
-
-    //Config mode LED "fast double-flash" - indicates to user we are in config mode
-    if (get_config_mode() == 1) {
-      delay(75);
-      heading_led_on(0);
-      delay(70);
-      heading_led_off();
-      delay(70);
-    }
-
-    check_config_mode();
-    display_rpm_if_requested();
-
-    //echo diagnostics if bot is idle
-    echo_diagnostics();
+  } else {    
+    handle_bot_idle();
   }
 
 }

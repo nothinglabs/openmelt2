@@ -1,6 +1,5 @@
 //this module handles calculation and timing loop for translational drift
-//also interfaces directly with the heading LED
-//Direction of rotation assumed to be CLOCKWISE (but should work counter-clockwise)
+//direction of rotation assumed to be CLOCKWISE (but should work counter-clockwise)
 
 #include "arduino.h"
 #include "melty_config.h"
@@ -19,10 +18,6 @@
 
 #define MAX_TRANSLATION_ROTATION_INTERVAL_US (1.0f / MIN_TRANSLATION_RPM) * 60 * 1000 * 1000
 #define MAX_TRACKING_ROTATION_INTERVAL_US MAX_TRANSLATION_ROTATION_INTERVAL_US * 2   //don't track heading if we are this slow (also puts upper limit on time spent in melty loop for safety)
-
-//not implemented
-//#define MIN_ROTATION_INTERVAL_BEFORE_THROTTLE_LIMIT_US (1.0f / MAX_RPM_BEFORE_THROTTLE_LIMIT) * 60 * 1000 * 1000
-
 
 static float accel_mount_radius_cm = DEFAULT_ACCEL_MOUNT_RADIUS_CM;
 static float accel_zero_g_offset = DEFAULT_ACCEL_ZERO_G_OFFSET;
@@ -76,7 +71,7 @@ int get_max_rpm() {
 
 
 //calculates time for this rotation of robot
-//is increased / decreased by a factor relative to RC left / right position
+//also steers the robot by increasing/ decreasing by a factor relative to RC left / right position
 //by having the rotation time intentionally run slighty short or long - heading of robot is effectively changed
 static float get_rotation_interval_ms(int steering_disabled) {
   
@@ -134,7 +129,7 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
     //LED heading offset adjustment overrides steering
     melty_parameters.steering_disabled = 1;
     //prevent reverse translation
-    melty_parameters.translate_forback = RC_FORBACK_NEUTRAL;
+    //melty_parameters.translate_forback = RC_FORBACK_NEUTRAL;
     
     //only adjust if stick is outside deadzone  
     if (rc_get_is_lr_in_config_deadzone() != RC_LR_IN_DEADZONE) {
@@ -159,6 +154,8 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
 //Motor timing, LED timing, etc.
 //This entire section takes ~1300us on an Atmega32u4 (acceptable)
 static struct melty_parameters_t get_melty_parameters(void) {
+
+  lock_rc_data();//prevent changes to RC values during calculations
 
   struct melty_parameters_t melty_parameters = {};
 
@@ -219,13 +216,22 @@ static struct melty_parameters_t get_melty_parameters(void) {
   melty_parameters.motor_start2 = melty_parameters.rotation_interval_us - (motor_on_us / 2);
   melty_parameters.motor_stop2 = motor_on_us / 2;
 
+  //if the battery voltage is low - shimmer the LED to let user know
+#ifdef BATTERY_ALERT_ENABLED
+  if (battery_voltage_low() == 1) melty_parameters.led_shimmer = 1;
+#endif
+
+  unlock_rc_data();   
+
   return melty_parameters;
 }
-
 
 //rotates the robot once + handles translational drift
 //(repeat as needed)
 void spin_one_rotation(void) {
+
+  //initial assignment of melty parameters
+  static struct melty_parameters_t melty_parameters = get_melty_parameters();
 
   //capture initial time stamp before rotation start
   //by starting before the loop - time performing accel sampling / floating point math is included in loop time
@@ -236,21 +242,23 @@ void spin_one_rotation(void) {
   static unsigned long cycle_count = 0;
   cycle_count++;
 
-  lock_rc_data();   //prevent changes to RC values during calculations
-  //all slow stuff (floating point math / sensor reads) should happen here...
-  static struct melty_parameters_t melty_parameters;
-  
-  melty_parameters = get_melty_parameters();
-  unlock_rc_data();
-  
-  //if the battery voltage is low - shimmer the LED to let user know
-#ifdef BATTERY_ALERT_ENABLED
-  if (battery_voltage_low() == 1) melty_parameters.led_shimmer = 1;
-#endif
-
   unsigned long time_spent_this_rotation_us = micros() - start_time;
+
+  //the melty parameters are updated either at the beginning of the rotation - or the middle of the rotation (alternating each time)
+  //this is done so that any errors due to the ~1ms accel read / math cycle cancel out any effect on tracking / translational drift
+
+  int melty_parameter_update_time_offset_us = 0;
+  if (cycle_count % 2 == 1) melty_parameter_update_time_offset_us = melty_parameters.rotation_interval_us / 2;  
+  bool melty_parameters_updated_this_rotation = false;
+
   //loop for one rotation of robot
   while (time_spent_this_rotation_us < melty_parameters.rotation_interval_us) {
+
+    //update melty parameters if we haven't / update time has elapsed
+    if (melty_parameters_updated_this_rotation == false && time_spent_this_rotation_us > melty_parameter_update_time_offset_us) { 
+      melty_parameters = get_melty_parameters();
+      melty_parameters_updated_this_rotation = true;
+    }
 
     //If translation direction is RC_FORBACK_NEUTRAL - robot cycles between forward and reverse translation for net zero translation
     //If motor 2 (or motor 1) is not present - control sequence remains identical
