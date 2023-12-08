@@ -21,11 +21,14 @@ void service_watchdog() {
 
 void wait_for_rc_good_and_zero_throttle() {
     while (rc_signal_is_healthy() != RC_SIGNAL_GOOD || rc_get_throttle_percent() > 0) {
-      service_watchdog();
       heading_led_on(0);
       delay(250);
       heading_led_off();
       delay(250);
+      
+      //services watchdog and echo diagnostics while we are waiting for RC signal
+      service_watchdog();
+      echo_diagnostics();
   }
 }
   
@@ -55,7 +58,7 @@ void setup() {
 #ifdef JUST_DO_DIAGNOSTIC_LOOP
   while (1) {
     service_watchdog();
-    diagnostic_loop();
+    echo_diagnostics();
     delay(250);   //delay prevents serial from getting flooded (can cause issues programming)
   }
 #endif
@@ -73,7 +76,7 @@ void setup() {
 }
 
 //dumps out diagnostics info
-void diagnostic_loop() {
+void echo_diagnostics() {
 
 #ifdef BATTERY_ALERT_ENABLED
   Serial.print("  Battery Voltage: ");
@@ -85,14 +88,16 @@ void diagnostic_loop() {
   Serial.print(load_accel_mount_radius());
   Serial.print("  Heading Offset: ");
   Serial.print(load_heading_led_offset());
+  Serial.print("  Zero G Offset: ");
+  Serial.print(load_accel_zero_g_offset());
+
 #endif  
 
-  Serial.print("  Accel G: ");
-  Serial.print(get_accel_force_g()  - load_accel_zero_g_offset());
+  Serial.print("  Raw Accel G: ");
+  Serial.print(get_accel_force_g());
 
   Serial.print("  Battery V: ");
   Serial.print(get_battery_voltage());
-
 
   Serial.print("  RC Health: ");
   Serial.print(rc_signal_is_healthy());
@@ -102,7 +107,6 @@ void diagnostic_loop() {
   Serial.print(rc_get_leftright());
   Serial.print("  RC F/B: ");
   Serial.println(rc_get_forback());
-
   
 }
 
@@ -136,38 +140,43 @@ void check_config_mode() {
 }
 
 
-
+//main control loop
 void loop() {
 
-  service_watchdog();
-
-//if the rc signal isn't good - keep motors off - and cycle slow LED pulse
-  while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
     service_watchdog();
+
+//if the rc signal isn't good - set motors off - and cycle slow LED pulse
+//this will interrupt  a spun-up bot if the signal becomes bad
+  while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
     motors_off();
     heading_led_on(0);
     delay(30);
     heading_led_off();
     delay(600);
+    
+      //services watchdog and echo diagnostics while we are waiting for RC signal
+    service_watchdog();
+    echo_diagnostics();
   }
 
-  //if RC is good - and throtte is above 0 - spin a single rotation (repeat as needed...)
+  //if RC is good - and throtte is above 0 - spin a single rotation
   if (rc_get_throttle_percent() > 0) {
      //this is where all the motor control happens!  (see spin_control.cpp)
     spin_one_rotation();  
-  
   } else {
     
-    //otherwise - assure motors are off
+    //if we aren't spinning....
+
+    //assure motors are off
     motors_off();
     
-    //"fast" idle flash - indicates RC signal is good while sitting idle
+    //normal LED "fast flash" - indicates RC signal is good while sitting idle
     delay(150);
     heading_led_on(0);
     delay(30);
     heading_led_off();
 
-    //extra delay adjusts flashing pattern to let user know bot is in config mode
+    //Config mode LED "fast double-flash" - indicates to user we are in config mode
     if (get_config_mode() == 1) {
       delay(75);
       heading_led_on(0);
@@ -178,6 +187,9 @@ void loop() {
 
     check_config_mode();
     display_rpm_if_requested();
+
+    //echo diagnostics if bot is idle
+    echo_diagnostics();
   }
 
 }

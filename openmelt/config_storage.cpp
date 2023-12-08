@@ -62,7 +62,7 @@ int load_heading_led_offset() {
 }
 
 float load_accel_zero_g_offset() {
-  if (check_sentinel() != 1) return ACCEL_ZERO_G_OFFSET;
+  if (check_sentinel() != 1) return DEFAULT_ACCEL_ZERO_G_OFFSET;
   float accel_zero_g_offset;
   accel_zero_g_offset = EEPROM.get(EEPROM_ACCEL_OFFSET_BYTE1_LOC, accel_zero_g_offset);
   return accel_zero_g_offset;

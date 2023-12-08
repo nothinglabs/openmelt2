@@ -25,9 +25,8 @@
 
 
 static float accel_mount_radius_cm = DEFAULT_ACCEL_MOUNT_RADIUS_CM;
-static float accel_zero_g_offset = ACCEL_ZERO_G_OFFSET;
-static float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;         //stored as in EEPROM as an INT - but handled as a float
-
+static float accel_zero_g_offset = DEFAULT_ACCEL_ZERO_G_OFFSET;
+static float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;         //stored as in EEPROM as an INT - but handled as a float for configuration purposes
 
 static unsigned int highest_rpm = 0;
 static int config_mode = 0;   //1 if we are in config mode
@@ -177,7 +176,9 @@ static struct melty_parameters_t get_melty_parameters(void) {
   }
   #endif 
 
-  float led_on_portion = .4f * (1.1f - melty_parameters.throttle_percent);  //LED width changed with throttle percent
+  float led_on_portion = melty_parameters.throttle_percent;  //LED width changed with throttle percent
+  if (led_on_portion < 0.15f) led_on_portion = 0.15f;
+  if (led_on_portion > 0.90f) led_on_portion = 0.90f;
 
   melty_parameters.translate_forback = rc_get_forback();
 
@@ -237,7 +238,9 @@ void spin_one_rotation(void) {
 
   lock_rc_data();   //prevent changes to RC values during calculations
   //all slow stuff (floating point math / sensor reads) should happen here...
-  struct melty_parameters_t melty_parameters = get_melty_parameters();
+  static struct melty_parameters_t melty_parameters;
+  
+  melty_parameters = get_melty_parameters();
   unlock_rc_data();
   
   //if the battery voltage is low - shimmer the LED to let user know
@@ -245,7 +248,7 @@ void spin_one_rotation(void) {
   if (battery_voltage_low() == 1) melty_parameters.led_shimmer = 1;
 #endif
 
-  unsigned long time_spent_this_rotation_us = 0;
+  unsigned long time_spent_this_rotation_us = micros() - start_time;
   //loop for one rotation of robot
   while (time_spent_this_rotation_us < melty_parameters.rotation_interval_us) {
 
@@ -304,4 +307,5 @@ void spin_one_rotation(void) {
     //just updating at end of loop to assure same value used for all evaluations
     time_spent_this_rotation_us = micros() - start_time;
   }
+
 }

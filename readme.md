@@ -70,9 +70,14 @@ Either kind of signal may be fed directly to a MOSFET or motor controller that a
 
 The antweight reference platform uses a RFP30N06LE N-Channel MOSFET.
 
+Open Melt supports a few different throttle configurations - see [melty_config.h](openmelt/melty_config.h) for details.
+
+In the default BINARY\_THROTTLE mode - the throttle directly relates to what portion of each rotation the motor(s) are (fully) powered for.  For example - at 50% throttle the motors would be powered for 180 degrees of each rotation.  At higher throttle settings translation is reduced (with no translation at 100%).
+
+When no forward or back translation is desired - the portion of the rotation that is powered is constantly cycled 180 degrees (cancelling out any translational drift).  
+
 Brushless RC motor controllers that support high-speed 490Hz PWM may work with Open Melt.  A "Hobbypower 30a" brushless controller running the [SimonK firmware](https://github.com/sim-/tgy) has been tested and found to work.  Other controllers running SimonK firmware may also work.
 
-Open Melt supports a few different configurations to control throttle / rotation speed.  See melty_config.h for configuration options.
 
 ## Heading LED
 
@@ -114,20 +119,75 @@ The [FlySky i6 transmitter ](https://www.flysky-cn.com/i6-gaishu) and [FlySky iA
 
 A few mechanisms are implemented with the intent of improving safety.
 
-A [watchdog timer](https://github.com/adafruit/Adafruit_SleepyDog) is used - so if the code unexpectedly becomes trapped - the Arduino should reboot (and the robot should enter an unpowered state).
+A [watchdog timer](https://github.com/adafruit/Adafruit_SleepyDog) is used - so if the code unexpectedly becomes trapped - the Arduino should reboot.
 
-At boot-up - it is verified that the RC signal is both good - and that the throttle is at 0% for ~1 second.  This means that if the robot reboots unexpectedly - it can not be spun up again until the driver lowers the throttle for ~1 second.  This behavior may be disabled (see melty_config.h).
+At boot-up - it is verified that the RC signal is both good - and that the throttle is at 0% for ~1 second.  This means that if the robot reboots unexpectedly - it can not be spun up again until the driver lowers the throttle for ~1 second.  This behavior may be disabled (see [melty_config.h](openmelt/melty_config.h)).
 
 If no RC updates are received on the throttle channel for ~1 second - the robot should spin down.  It will resume operation when the RC signal is restored **(0% throttle is not required)**.
 
 It should be noted that MOSFET drivers can fail in a "closed" state.  This means that they will drive the motor until the battery runs out.
 
-## User Guide / Demo Videos
-Coming soon...
+## User Guide
+
+###Spun-Down Status LED
+<table>
+<tr><td>Waiting for Initial RC Signal (0% Throttle Required)</td><td>Slow On / Off</td></tr>
+<tr><td>RC Signal Lost</td><td>Slow Flash</td></tr>
+<tr><td>RC Good / Ready to Spin-up</td><td>Fast Flash</td></tr>
+<tr><td>Configuration Mode</td><td>Fast Double-Flash</td></tr>
+</table>
+
+###Configuration Mode
+
+Configuration mode allows interactive setting of correct rotation radius and LED heading offset.  The accelerometer's DC offset (inaccuracy at 0g) is also automatically measured and then compensated for.  Having DEFAULT\_ACCEL\_MOUNT\_RADIUS\_CM set approximately correct in [melty_config.h](openmelt/melty_config.h) can make the setup process easier.
+
+Configuration mode can be entered by pulling the control stick toward the back - and holding it there for ~1 second.
+
+To exit configuration mode - pull the throttle to the back for ~1 second again.  Any changes to configuration will be saved to EEPROM.
+
+###Configuring Tracking Adjustment (radius of rotation)
+
+Once in configuration mode - spin the robot up using the throttle.  Try 30-40% throttle at first.
+
+With the control stick in the neutral forward-back position - move the stick left or right until heading LED tracks a consistent direction.  The heading LED will "shimmer" as it's being adjusted.
+
+Moving the control stick forward will attempt to move the robot forward to test translation.  Moving the stick left / right will steer the robot as it's moving.  
+
+(Moving the robot in reverse isn't supported in configuration mode - try not to drive into a corner...)
+
+###Configuring Heading Adjustment (LED offset)
+
+If the robot tracks consistently - but forward movement is offset from the LED's position - the LED offset needs to be adjusted.
+
+With the robot spinning - pull the control stick back.  Then move the stick to the right or left.  The LED will shimmer to indicate that the LED offset is being changed.
+
+Now - try moving the robot forward again.  Repeat this process until you are satisfied with the LED heading.  This will likely take several attempts.
+
+###Driving
+Once configured properly - Open Melt drives (mostly) like a regular robot.  Increase throttle to spin-up.  Once spinning - the control stick controls left/right tracking - and forward/back translation.
+
+Throttle settings of over 50% tend to increase rotation speed at expense of translation.
+
+The width of the LED beacon grows and shrinks proportionate to the throttle.  It roughly indicates what portion of each rotation the robot is powered for.
+
+If the robot is not tracking perfectly - minor adjustments may be made using your RC radio left/right trim (the math is done in a way that adjustments should stay stable even as rotation speed changes).  
+
+###Low Battery Warning
+If low voltage is detected - the LED beacon will have a shimmering effect.  See [melty_config.h](openmelt/melty_config.h) for battery monitor settings.
+
+###Max RPM Report
+While spun-down - push the control stick forward for ~1 second.  This will cause the robot to flash out the highest RPM observed (since last boot-up) in multiples of 100.  For example 23 flashes = 2300rpm.
+
+Entering / exiting config mode will cause this number to be reset to 0.
+
+
+##Troubleshooting
+When throttle is at 0% - Open Melt will log out diagnostics data (RC data, accelerometer status, configuration parameters, etc.) via serial USB.
+
+Please note - connecting the Arduino to USB may put it in an unexpected state - **which could cause the motor(s) to spin up**.  Only connect your Arduino to USB if the battery powering the motor is disconnected.
 
 
 
-For information on Open Melt version 1 - [see here](https://github.com/nothinglabs/openmelt).
-
+####For info on Open Melt version 1 (obsolete!) - [see here](https://github.com/nothinglabs/openmelt).
 
  
