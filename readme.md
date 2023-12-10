@@ -137,7 +137,7 @@ It should be noted that MOSFET drivers can fail in a "closed" state.  This means
 
 <div align="center">
 <video width="500" controls>
-  <source src="open_melt2_config.mp4" type="video/mp4">
+  <source src="./open_melt2_config.mp4" type="video/mp4">
 </video></div>
 
 ## User Guide
