@@ -135,10 +135,7 @@ It should be noted that MOSFET drivers can fail in a "closed" state.  This means
 
 ## Tutorial Video
 
-<div align="center">
-<video width="500" controls>
-  <source src="./open_melt2_config.mp4" type="video/mp4">
-</video></div>
+https://github.com/nothinglabs/openmelt2/assets/3834997/2dc84804-ed5a-4955-8e00-1ae2ac9f0f43
 
 ## User Guide
 
