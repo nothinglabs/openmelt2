@@ -109,12 +109,18 @@ void display_rpm_if_requested() {
 }
 
 void check_config_mode() {
+  
   //if user pulls control stick back for 750ms - enters interactive configuration mode
   if (rc_get_forback() == RC_FORBACK_BACKWARD) {
     delay(750);
     if (rc_get_forback() == RC_FORBACK_BACKWARD) {
       toggle_config_mode(); 
       if (get_config_mode() == 0) save_melty_config_settings();    //save melty settings on config mode exit
+      
+      //wait for user to release stick - so we don't re-toggle modes
+      while (rc_get_forback() == RC_FORBACK_BACKWARD) {
+        service_watchdog();
+      }
     }
   }    
 }
@@ -127,13 +133,13 @@ void handle_bot_idle() {
     
     //normal LED "fast flash" - indicates RC signal is good while sitting idle
     heading_led_on(0); delay(30);
-    heading_led_off(); delay(200);
+    heading_led_off(); delay(120);
 
     //If in config mode blip LED again to show "double-flash" 
     if (get_config_mode() == 1) {
-      heading_led_off(); delay(100);
+      heading_led_off(); delay(400);
       heading_led_on(0); delay(30);
-      heading_led_off(); delay(80);
+      heading_led_off(); delay(140);
     }
 
     check_config_mode();          //check if user requests we enter / exit config mode

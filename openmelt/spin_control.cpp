@@ -134,6 +134,9 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
     //only adjust if stick is outside deadzone  
     if (rc_get_is_lr_in_config_deadzone() != RC_LR_IN_DEADZONE) {
 
+      //disable translation if adjusting heading
+      melty_parameters.translate_forback = RC_FORBACK_NEUTRAL;
+
       //show that we are changing config
       melty_parameters.led_shimmer = 1;
 
@@ -174,7 +177,7 @@ static struct melty_parameters_t get_melty_parameters(void) {
   #endif 
 
   float led_on_portion = melty_parameters.throttle_percent;  //LED width changed with throttle percent
-  if (led_on_portion < 0.15f) led_on_portion = 0.15f;
+  if (led_on_portion < 0.10f) led_on_portion = 0.10f;
   if (led_on_portion > 0.90f) led_on_portion = 0.90f;
 
   melty_parameters.translate_forback = rc_get_forback();
@@ -260,8 +263,8 @@ void spin_one_rotation(void) {
       melty_parameters_updated_this_rotation = true;
     }
 
-    //If translation direction is RC_FORBACK_NEUTRAL - robot cycles between forward and reverse translation for net zero translation
-    //If motor 2 (or motor 1) is not present - control sequence remains identical
+    //if translation direction is RC_FORBACK_NEUTRAL - robot cycles between forward and reverse translation for net zero translation
+    //if motor 2 (or motor 1) is not present - control sequence remains identical
 
     //handle translating forwards
     if (melty_parameters.translate_forback == RC_FORBACK_FORWARD || (melty_parameters.translate_forback == RC_FORBACK_NEUTRAL && cycle_count % 2 == 0)) {
@@ -296,7 +299,6 @@ void spin_one_rotation(void) {
     }
 
     //displays heading LED at correct location
-    #ifndef HEADING_LED_MAPS_TO_MOTOR1
     if (melty_parameters.led_start > melty_parameters.led_stop) {
       if (time_spent_this_rotation_us >= melty_parameters.led_start || time_spent_this_rotation_us <= melty_parameters.led_stop) {
         heading_led_on(melty_parameters.led_shimmer);
@@ -310,7 +312,6 @@ void spin_one_rotation(void) {
         heading_led_off();
       }
     }
-    #endif
 
     //just updating at end of loop to assure same value used for all evaluations
     time_spent_this_rotation_us = micros() - start_time;

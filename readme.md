@@ -1,6 +1,6 @@
-# Open Melt 2
+# Open Melt
 
-Open Melt 2 is an open-source translational drift (aka "melty brain") robot controller project based on Arduino.  
+Open Melt is an open-source translational drift (aka "melty brain") robot controller based on Arduino.
 
 A translational drift robot spins its entire body using its drive wheel(s), but is still capable of directional control by modulating motor power at certain points each rotation.  To achieve this - the rate of rotation must be tracked.
 
@@ -18,6 +18,8 @@ An LED is turned on once per rotation - giving the appearance of the "front" of 
 The system can work with robots using either one or two drive motors.
 
 It has been tested up to 3200rpm - and can likely work at significantly higher speeds.
+
+Version 2 of the project is a complete recode (previously native Atmega/AVR).  The move to Arduino was done to make it more accessible and potentially portable to non-AVR platforms.
 
 Open Melt is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.
 
@@ -166,7 +168,7 @@ If the robot tracks consistently - but forward movement is offset from the LED's
 
 With the robot spinning - pull the control stick back.  This will cause the robot to translate in the direction it thinks is backwards based on the current heading configuration.
 
-While moving backwards - move the control stick to the right or left.  The LED will shimmer to indicate that the LED offset is being changed.
+Pull the stick to the left or right lower diagonal corners to adjust heading offset.  The LED will shimmer to indicate that the offset is being changed.
 
 Now - try moving the robot forward again.  Repeat this process until the robot moves forward and back in alignment with the LED beacon.  This will likely take several attempts.
 

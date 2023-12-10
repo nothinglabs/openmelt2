@@ -8,7 +8,6 @@
 
 //----------DIAGNOSTICS----------
 //#define JUST_DO_DIAGNOSTIC_LOOP                 //Disables the robot / just displays config / battery voltage / RC info via serial
-//#define HEADING_LED_MAPS_TO_MOTOR1              //Causes heading LED to turn on/off to match motor 1 state (enabling this can be good for troubleshooting)
 
 //----------SAFETY----------
 #define ENABLE_WATCHDOG                           //Uses Adafruit's sleepdog to enable watchdog / reset (tested on AVR - should work for ARM https://github.com/adafruit/Adafruit_SleepyDog)

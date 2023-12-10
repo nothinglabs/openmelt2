@@ -29,9 +29,6 @@ void motor_on(float throttle_percent, int motor_pin) {
 
 void motor_1_on(float throttle_percent) {
   motor_on(throttle_percent, MOTOR_PIN1);
-#ifdef HEADING_LED_MAPS_TO_MOTOR1
-    heading_led_on(0);
-#endif 
 }
 
 void motor_2_on(float throttle_percent) {
@@ -50,9 +47,6 @@ void motor_coast(int motor_pin) {
 void motor_1_coast() {
   motor_coast(MOTOR_PIN1);
 
-#ifdef HEADING_LED_MAPS_TO_MOTOR1
-  heading_led_off();
-#endif 
 }
 
 void motor_2_coast() {
@@ -70,10 +64,6 @@ void motor_off(int motor_pin) {
 
 void motor_1_off() {
   motor_off(MOTOR_PIN1);
-
-#ifdef HEADING_LED_MAPS_TO_MOTOR1
-  heading_led_off();
-#endif 
 }
 
 void motor_2_off() {
