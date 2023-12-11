@@ -121,7 +121,7 @@ This all seems to work - at least for testing purposes.  You might have better /
 
 A shell option without a built-in weapon is provided.  Building the robot without a weapon is a good way to test with reduced "drama."
 
-This shell includes a mounting hole so that a weapon may be attached later using a peg.  No assurances are given about the robustness of this approach.  Using hot-glue to re-enforce weapon attachment may prove useful.
+This shell includes a mounting hole so that a weapon may be attached later using a press-fit pin.  No assurances are given about the robustness of this approach.  Using hot-glue to re-enforce weapon attachment may prove useful.
 
 <table><tr><td>
 <img src="../media/weapon_on.png" alt="drawing" width="380"/></td><td>
@@ -134,7 +134,7 @@ This shell includes a mounting hole so that a weapon may be attached later using
 ## Motor 
 A 45-turn 540-sized "sealed endbell" hobby motor is used.  [Injora](https://www.amazon.com/INJORA-Brushed-Tracks-AXI03007-Parts%EF%BC%8845T%EF%BC%89/dp/B08X21JCGZ/?th=1) is one of many common brands.
 
-The number of turns determines how fast the motor rotates for a given voltage.  A 45-turn motor is considered a slower or "torque / crawler" motor.  
+The number of turns determines how fast the motor rotates for a given voltage.  Lower turn motors spin faster and draws more current.  A 45-turn motor is considered a slower "torque / crawler" motor.  
 
 Using a lower turn motor has not been tested - and may overtax the MOSFET.
 
