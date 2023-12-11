@@ -67,9 +67,9 @@ The option for a removable weapon is intended to provide a less-scary way to tes
 The body of this robot was designed in [OpenSCAD](https://openscad.org/) (programmatic CAD).  You can easily change parameters to adjust things like shell thickness and diameter.
 
 <table><tr><td>
-<img src="../media/shell_with_weapon.png" alt="drawing" width="350"/></td><td>
+<img src="../media/shell_with_weapon.png" alt="drawing" width="320"/></td><td>
 
-<img src="../media/shell.png" alt="drawing" height="300"/></td>
+<img src="../media/shell.png" alt="drawing" width="400"/></td>
 </tr><td colspan="2" align="center">
 <img src="../media/body_with_electronics.png" alt="drawing" width="350"/></td></tr>
 </table>
@@ -77,13 +77,15 @@ The body of this robot was designed in [OpenSCAD](https://openscad.org/) (progra
 Stand-ins for electronics can be rendered to verify everything fits as intended.
 
 The following STL files are provided for 3d-printing:
-<table>
-<tr><td>Robot shell without weapon (weapon mounting hole)</td><td>shell\_no\_weapon.stl</td></tr>
-<tr><td>Detachable weapon</td><td>weapon.stl</td></tr>
-<tr><td>Weapon mounting pin</td><td>weapon\_pin.stl</td></tr>
-<tr><td>Robot lid</td><td>lid.stl</td></tr>
-<tr><td>Robot shell with integrated weapon</td><td>shell\_with\_weapon.stl</td></tr>
-</table>
+
+| Component                                              | File                      |
+|--------------------------------------------------------|---------------------------|
+| Robot shell without weapon (weapon mounting hole)      | shell\_no\_weapon.stl     |
+| Detachable weapon                                      | weapon.stl                |
+| Weapon mounting pin                                    | weapon\_pin.stl           |
+| Robot lid                                              | lid.stl                   |
+| Robot shell with integrated weapon                     | shell\_with\_weapon.stl   |
+
 
 
 ## 3d Printing Notes
