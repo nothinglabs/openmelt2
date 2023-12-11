@@ -134,7 +134,7 @@ This shell includes a mounting hole so that a weapon may be attached later using
 ## Motor 
 A 45-turn 540-sized "sealed endbell" hobby motor is used.  [Injora](https://www.amazon.com/INJORA-Brushed-Tracks-AXI03007-Parts%EF%BC%8845T%EF%BC%89/dp/B08X21JCGZ/?th=1) is one of many common brands.
 
-The number of turns determines how fast the motor rotates for a given voltage.  Lower turn motors spin faster and draws more current.  A 45-turn motor is considered a slower "torque / crawler" motor.  
+The number of turns determines how fast the motor rotates for a given voltage.  Lower turn motors spin faster and draw more current.  A 45-turn motor is considered a slower "torque / crawler" motor.  
 
 Using a lower turn motor has not been tested - and may overtax the MOSFET.
 
@@ -212,7 +212,7 @@ See BATTERY\_ALERT\_ENABLED and BATTERY\_ADC\_WARN\_VOLTAGE\_THRESHOLD in [melty
 
 ## Optional Motor Modification
 
-A 1-wheel robot results in a constant pulling force on the motor as it rotates.  This will cause the motor shaft to become loose overtime (specifically - there is an internal shim on the shaft that slips).  These motors tend to still run - but are noisy, slower and less efficient.
+A 1-wheel robot results in a constant pulling force on the motor as it rotates.  This will cause the motor shaft to become loose over time (specifically - there is an internal shim on the shaft that slips).  These motors tend to still run - but are noisy, slower and less efficient.
 
 One solution is to just replace the motor when it gets worn-out.  At about $15 - this is a pretty good option.
 
@@ -220,7 +220,7 @@ One solution is to just replace the motor when it gets worn-out.  At about $15 -
 <img src="../media/motor_shaft.jpg" alt="drawing" width="600"/>
 <p>Worn motor showing ~2mm play in shaft</p></div>
 
-A modification that seems to help with this problem is placing a 3.2mm plastic washer on the rear-end of the shaft - and then soldering a metal 3.2mm washer on top of it to sandwich it in place.
+A modification that seems to help with this problem is placing a 3.2mm inner-diameter plastic washer on the rear-end of the shaft - and then soldering a metal 3.2mm inner-diameter washer on top of it to sandwich it in place.
 
 <div align="center">
 <img src="../media/motor_hack.jpg" alt="drawing" width="400"/>
