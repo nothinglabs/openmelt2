@@ -76,7 +76,7 @@ void echo_diagnostics() {
   Serial.print("  RC Health: "); Serial.print(rc_signal_is_healthy());
   Serial.print("  RC Throttle: "); Serial.print(rc_get_throttle_percent());
   Serial.print("  RC L/R: "); Serial.print(rc_get_leftright());
-  Serial.print("  RC F/B: "); Serial.println(rc_get_forback());
+  Serial.print("  RC F/B: "); Serial.print(rc_get_forback());
 
 #ifdef BATTERY_ALERT_ENABLED
   Serial.print("  Battery Voltage: "); Serial.print(get_battery_voltage());
@@ -87,7 +87,8 @@ void echo_diagnostics() {
   Serial.print("  Heading Offset: "); Serial.print(load_heading_led_offset());
   Serial.print("  Zero G Offset: "); Serial.print(load_accel_zero_g_offset());
 #endif  
-  
+  Serial.println("");
+
 }
 
 void display_rpm_if_requested() {

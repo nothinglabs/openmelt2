@@ -37,9 +37,6 @@ Open Melt is provided under the [Creative Commons Attribution-NonCommercial-Shar
 
 The HSLI311 is a 3v part - but the Adafruit breakout includes a 3v<->5v level converter to make interfacing with the Arduino easy.  Alternatively, [Sparkfun's H3LIS331DL Breakout](https://www.sparkfun.com/products/14480) has been verified to work when used in conjunction with the [SparkFun 3v<->5v Logic Level Converter](https://www.sparkfun.com/products/12009).
 
-Use of an **Atmega328-based Arduino is not supported** due to lack of adequate interrupt pins.
-  
-
 ## 1 vs. 2 Wheels
 Open Melt generates signals for 2 motors independent of how many are connected.  Motor 2 is powered for the same portion of each rotation as motor 1 (trailing 180 degrees out of phase).
 
@@ -196,13 +193,28 @@ While spun-down - push the control stick forward for ~1 second.  This will cause
 Entering / exiting config mode will cause this number to be reset to 0.
 
 
+## Arduino Notes
+This project uses both the "RX" and "TX" (pins 0 and 1) on the Arduino.  With Atmega32u4 Arduinos this does not interfere with programming.
+
+Open Melt uses the [Adafruit SleepyDog](https://github.com/adafruit/Adafruit_SleepyDog) to implement a watchdog timer.
+
+The [SparkFun_LIS331](https://github.com/sparkfun/SparkFun_LIS331_Arduino_Library) library is used to interface to the H3LIS331 accelerometer.
+
+Versions of both libraries last verified to work with Open Melt are archived in the arduino_library_archives folder.
+
+Use of an **Atmega328-based Arduino is not supported** due to lack of adequate interrupt pins.
+
+Open Melt has not been tested on non-AVR Arduinos - but may work with some minor limitations.  See [melty_config.h](openmelt/melty_config.h) for details.
+
+
 ## Troubleshooting
 When throttle is at 0% - Open Melt will log out diagnostics data (RC data, accelerometer status, configuration parameters, etc.) via serial USB.  This may be viewed by using Arduino's "Serial Monitor" (115kbps).
 
 Note: Connecting the Arduino to USB may put it in an unexpected state - **which could cause the motor(s) to spin up**.  Only connect your Arduino to USB if the battery powering the motor is disconnected.
 
+
 ***
 
-#### For info on Open Melt version 1 (obsolete!) - [see here](https://github.com/nothinglabs/openmelt).
+#### For Open Melt version 1 (obsolete!) - [see here](https://github.com/nothinglabs/openmelt).
 
  

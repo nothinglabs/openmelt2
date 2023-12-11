@@ -1,7 +1,7 @@
-weaponPartOfBody = true;   //render the weapon and the body together
+weaponPartOfBody = false;   //render the weapon and the body together
 
 renderBotBody = true;     //render the main shell or not
-renderLid = true;           //render the lid of not
+renderLid = false;           //render the lid of not
 positionLidForPrint = true;  //if false - lid renders on top of the bot
 
 renderWeapon = true;
@@ -75,7 +75,10 @@ $fn = 50;
 
 if (renderLid) lid();
 
-if (renderWeapon) weapon();
+if (renderWeapon) {
+    if (!weaponPartOfBody) color([1.0,0.0,0.0]) weapon();
+    else weapon();
+}
 
 if (renderWeaponPin && !weaponPartOfBody) weaponPin();
 
@@ -93,12 +96,12 @@ if (renderBotBody) {
 
     if (renderMotor) {
         translate ([0, motorMountOffset + ((motorMountLength - motorLength) / 2),floorThickness])
-            motor();
+           color([0.5,0.5,0.5]) motor();
     }
 
     if (renderWheel) {
         translate ([0,motorMountOffset,floorThickness - motorDepthBelowFloorSurface])
-            wheel();
+            color([0.2,0.2,0.2]) wheel();
     }
     
 
@@ -165,29 +168,29 @@ module arduinoShelf()
 
 module dummyElectronics() {
     //LED
-    translate([56,-26,botHeight -5]) rotate ([0,0,0])  cylinder(d = 5, h= 5);
+    color([0.1,0.1,0.8]) translate([56,-26,botHeight -5]) rotate ([0,0,0])  cylinder(d = 5, h= 5);
 
     //capacitor
-    translate([56,-3,floorThickness]) rotate ([0,0,0])  cylinder(d = 15, h= 25);
+    color([0.3,0.3,0.3]) translate([56,-3,floorThickness]) rotate ([0,0,0])  cylinder(d = 15, h= 25);
 
     //battery
-    translate([-34,54,floorThickness]) rotate ([90,0,0])  cube([53,29,16]);
+    color([1.0,0.5,0.5]) translate([-34,54,floorThickness]) rotate ([90,0,0])  cube([53,29,16]);
 
     //motor driver (Mosfet + PCB heatsink)
-    translate([-55,24,floorThickness]) rotate ([90,0,0])  cube([18,15,18]);
+    color([1.0,0.5,0.2]) translate([-55,24,floorThickness]) rotate ([90,0,0])  cube([18,15,18]);
 
     //rx placeholder (Flysky FS-iA6 Receiver)
-    translate([60,20,floorThickness]) rotate ([0,0,127])  cube([40,21.1,7.5]);
+    color([0.1,0.5,0.5]) translate([60,20,floorThickness]) rotate ([0,0,127])  cube([40,21.1,7.5]);
 
     //Adafruit ItsyBitsy 32u4
 //    translate([45,18,15]) rotate ([-21,0,175])  cube([18,35,13]);
     
         //arduino micro 
-    translate([45,23,18]) rotate ([-21,0,175])  cube([18,48,13]);
+    color([0.1,0.1,0.5])translate([45,23,18]) rotate ([-21,0,175])  cube([18,48,13]);
 
 
     //accelerometer (Adafruit H3LIS331)
-    translate([-52,-20,floorThickness]) rotate ([0,0,0])  cube([26,18,15]);
+    color([0.1,0.4,0.5]) translate([-52,-20,floorThickness]) rotate ([0,0,0])  cube([26,18,15]);
     
 }
 
