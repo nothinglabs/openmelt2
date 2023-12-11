@@ -33,7 +33,7 @@ This robot has not yet been battle tested.
 
 ## Fasteners / Tools / Misc.:
  - [\#2-28 x 1/4" Phillips Screws](https://www.mcmaster.com/products/plastite-screws/screw-size~no-2/length~1-4-2/length~0-25/)
- - Zip Ties
+ - Zip ties
  - Mounting tape (Scotch Extreme or similar)
  - Hot glue gun ("hot" melt as opposed to "low" melt)
  - Small piece of PCB blank or copper sheet
@@ -103,7 +103,7 @@ The Arduino is installed on a special shelf that rises up from the floor at an a
 
 The battery is taped both against the floor of the robot - and the flat section of wall behind it.  There is clearance under the flat wall for a zip-tie if more security is desired (good idea).
 
-The power switch, LED, capacitor and resistors are all held in place with a hot glue.
+The power switch, LED, capacitor and resistors are all held in place with hot glue.
 
 The motor is held into place using zip ties.
 
@@ -143,10 +143,13 @@ The 30SQ045 Schottky diode must be soldered across the motor leads as indicated 
 
 ## Wheel Hub
 The wheel hub is specified as 3mm, where the motor has a shaft of 3.175mm (1/8").  It will need to be very slightly drilled out.
+<div align="center">
 
+<img src="../media/wheel_hub.jpg" alt="drawing" width="400"/>
+</div>
 
 ## Battery
-The [7.4v 900mAh battery](https://www.amazon.com/dp/B09BYVNH2N?psc=1&ref=ppx_yo2ov_dt_b_product_details) used for test build is specified as 53x29x16mm (46 grams).  The key dimension is that it needs to be < 30mm wide in order to fit as oriented.
+The [7.4v 900mAh battery](https://www.amazon.com/dp/B09BYVNH2N?psc=1&ref=ppx_yo2ov_dt_b_product_details) used for the test build is specified as 53x29x16mm (46 grams).  The key dimension is that it needs to be < 30mm wide in order to fit as oriented.
 
 Runtime on a full battery charge is over 6 minutes.  A somewhat smaller battery could probably be used.
 
@@ -154,20 +157,35 @@ Upgrading to a 11.1v battery may be possible - but could be too much for the MOS
 
 ## Schematic
 
-<img src="../openmelt_schematic/schematic.jpg" alt="drawing" width="600"/>
+Wire it up like this...
+<div align="center">
 
+<img src="../openmelt_schematic/schematic.jpg" alt="drawing" width="600"/>
+</div>
 
 ## Wiring Things (Wire Wrap)
 Using ["wire wrap"](https://learn.sparkfun.com/tutorials/working-with-wire/how-to-use-a-wire-wrap-tool) for all signal and low-power connections is recommended.  When done properly wire-wrap connections are reliable and provide strain relief.  The small gauge wires minimize the stress put on connections under the stresses experienced by a melty bot.
 
+<div align="center">
 <img src="../media/wire_wrap.png" alt="drawing" width="300"/>
+</div>
 
 Wire wrapping has fallen out-of-fashion - but there is a reason they used this approach for the [Apollo Guidance Computer](http://www.righto.com/2019/07/software-woven-into-wire-core-rope-and.html).
 
 If using another wiring method - just keep in mind the high forces this robot will experience.  Temporary "Dupont wire" jumpers are not likely to work reliably.
 
+## Heading LED
+The heading LED and resistor are hot glued into the upper-left corner of the robot.  
+
+Glue the LED as close to the top of the shell (away from the floor) as possible to assure good visibility.
+
+Make sure to glue the resistor to a surface so that it doesn't place strain on the LED or wiring.
+
+<div align="center">
+<img src="../media/led_mount.jpg" alt="drawing" width="300"/>
+</div>
+
 ## Motor Driver
-<img style="float: right;" src="../media/motor_driver.jpg" alt="drawing" width="180"/>
 
 The RFP30N06LE is a widely available N-channel MOSFET.  The original FairChild / onsemi version seems discontinued - but many manufacturers still make versions of it.
 
@@ -176,6 +194,10 @@ Cut a small piece of PCB blank or thin copper sheet - and solder the tab of the 
 The tab is electrically equivalent to the middle pin.  The motor may be directly connected to the copper PCB surface (the middle pin may be cut off).
 
 The PCB blank / copper sheet provides adequate surface area to be mounted using double-sided tape.
+
+<div align="center">
+<img src="../media/motor_driver.jpg" alt="drawing" width="240"/>
+</div>
 
 
 ## Battery Voltage Monitor
