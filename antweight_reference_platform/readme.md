@@ -11,7 +11,7 @@ This robot can spin up to around 3000rpm.  It is capable of causing projectiles 
 The option for a removable weapon is intended to provide a less-scary way to test a melty brain robot.  Proper precautions should still be taken.
 
 <div align="center">
-<img src="../media/plastic_ant.jpg" alt="drawing" height="400"/>
+<img src="../media/plastic_ant.jpg" alt="drawing" width="500"/>
 </div>
 
 ## Parts List
@@ -42,7 +42,7 @@ The option for a removable weapon is intended to provide a less-scary way to tes
 ## Overview / Weight Budget
 
 <div align="center">
-<img src="../media/internals_labelled.jpg" alt="drawing" height ="500"/>
+<img src="../media/internals_labelled.jpg" alt="drawing" width ="750"/>
 </div>
 
 | Component                    | Weight (grams) |
@@ -67,11 +67,11 @@ The option for a removable weapon is intended to provide a less-scary way to tes
 The body of this robot was designed in [OpenSCAD](https://openscad.org/) (programmatic CAD).  You can easily change parameters to adjust things like shell thickness and diameter.
 
 <table><tr><td>
-<img src="../media/shell_with_weapon.png" alt="drawing" height="250"/></td><td>
+<img src="../media/shell_with_weapon.png" alt="drawing" width="350"/></td><td>
 
-<img src="../media/shell.png" alt="drawing" height="250"/></td>
+<img src="../media/shell.png" alt="drawing" height="300"/></td>
 </tr><td colspan="2" align="center">
-<img src="../media/body_with_electronics.png" alt="drawing" height="250"/></td></tr>
+<img src="../media/body_with_electronics.png" alt="drawing" width="350"/></td></tr>
 </table>
 
 Stand-ins for electronics can be rendered to verify everything fits as intended.
@@ -117,13 +117,13 @@ Using a lower turn motor has not been tested - and may overtax the MOSFET.
 The 1-wheel robot results in a constant pulling force on the motor as it rotates.  This will cause the motor shaft to become loose overtime (specifically - there is a shim on the shaft that slips).  These motors tend to still run - but are noisy, slower and less efficient.  One solution is to just replace the motor when it gets worn-out.
 
 <div align="center">
-<img src="../media/motor_shaft.jpg" alt="drawing" height="300"/>
+<img src="../media/motor_shaft.jpg" alt="drawing" width="600"/>
 <p>Worn Motor Showing ~2mm play in shaft</p></div>
 
 A 3.2mm washer can be soldered on the rear tip of the shaft.  I high temperature soldering gun and use of flux will help assure a good bond is made.
 
 <div align="center">
-<img src="../media/motor_hack.jpg" alt="drawing" height="300"/>
+<img src="../media/motor_hack.jpg" alt="drawing" width="400"/>
 <p>Worn Motor Showing ~2mm play in shaft</p>
 </div>
 
@@ -138,13 +138,13 @@ The wheel hub is specified as 3mm, where the motor has a shaft of 3.175mm (1/8")
 
 ## Schematic
 
-<img src="../openmelt_schematic/schematic.jpg" alt="drawing" height="600"/>
+<img src="../openmelt_schematic/schematic.jpg" alt="drawing" width="600"/>
 
 
 ## Wiring Things (Wire Wrap)
 Using ["wire wrap"](https://learn.sparkfun.com/tutorials/working-with-wire/how-to-use-a-wire-wrap-tool) for all signal and low-power connections is recommended.  When done properly wire-wrap connections are reliable and provide strain relief.  The small gauge wires minimize the stress put on connections under the stresses experienced by a melty bot.
 
-<img src="../media/wire_wrap.png" alt="drawing" height="300"/>
+<img src="../media/wire_wrap.png" alt="drawing" width="300"/>
 
 Wire wrapping has fallen out-of-fashion - but there is a reason they used this approach for the [Apollo Guidance Computer](http://www.righto.com/2019/07/software-woven-into-wire-core-rope-and.html).
 
@@ -155,7 +155,7 @@ If using another approach - just keep in mind the 200+g forces.  Temporary "Dupo
 If trying a different approach - keep
 
 ## Motor Driver
-<img style="float: right;" src="../media/motor_driver.jpg" alt="drawing" height="250"/>
+<img style="float: right;" src="../media/motor_driver.jpg" alt="drawing" width="180"/>
 
 The RFP30N06LE is a widely available N-Channel MOSFET.  The original FairChild / onsemi version seems discontinued - but many manufacturers still make versions of it.
 
@@ -187,4 +187,4 @@ See BATTERY\_ALERT\_ENABLED and BATTERY\_ADC\_WARN\_VOLTAGE\_THRESHOLD in [melty
 
 Install the latest [Arduino IDE](https://www.arduino.cc/en/software) - then open the Open Melt project.  
 
-<img src="../media/programming.jpg" alt="drawing" height="300"/>
+<img src="../media/programming.jpg" alt="drawing" width="300"/>
