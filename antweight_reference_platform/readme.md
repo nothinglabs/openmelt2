@@ -23,7 +23,7 @@ This robot has not yet been battle tested.
 - [30SQ045 Schottky Diode](https://www.digikey.com/en/products/detail/anbon-semiconductor-int-l-limited/30SQ045/18800935)
 - 3mm blue LED (rated 20ma or higher)
 - [FlySky i6 transmitter ](https://www.flysky-cn.com/i6-gaishu) and [FlySky iA6 receiver](https://www.flysky-cn.com/ia6-canshu)
-- 45-turn 540 size RC car motor ("torque" or "crawler")
+- 45-turn 540 size RC car motor
 - [FingerTech Mini Power Switch](https://www.fingertechrobotics.com/proddetail.php?prod=ft-mini-switch)
 - [FingerTech Twist Hub (3mm / 0.5")](https://www.fingertechrobotics.com/proddetail.php?prod=ft-twist-hubs)
 - [FingerTech Foam Wheel (1.75" x 0.5")](https://www.fingertechrobotics.com/proddetail.php?prod=ft-foam-wheels)
@@ -39,7 +39,6 @@ This robot has not yet been battle tested.
  - Small piece of PCB blank or copper sheet
  - Access to a 3d-printer / PLA filament
  - [Wire wrapping tool](https://www.amazon.com/Wire-Wrap-Gauge-ELECTRONIX-EXPRESS/dp/B00BFYE0CY/)
-(3052050)
 
 ## Overview / Weight Budget
 
@@ -93,18 +92,18 @@ The following STL files are provided for 3d-printing:
 ## 3d Printing Notes
 The test build of the robot is printed in PLA with 100% infill.
 
-For best strength, use a high shell count (5+) and void using a cooling fan.
+For best strength, use a high shell count (5+) and avoid using a cooling fan.
 
 ## General Construction
 The lid is held on with \#2 screws.  They seem to self-tap pretty effectively.
 
-The accelerometer, motor driver, Arduino and battery are all secured using the double-sided tape.
+The accelerometer, motor driver, Arduino and battery are all secured using double-sided tape.
 
 The Arduino is installed on a special shelf that rises up from the floor at an angle.  This allows a USB cable to be attached to it for programming after assembly.
 
 The battery is taped both against the floor of the robot - and the flat section of wall behind it.  There is clearance under the flat wall for a zip-tie if more security is desired (good idea).
 
-The power switch, LED, and resistors are all held in place with a little hot glue.
+The power switch, LED, capacitor and resistors are all held in place with a hot glue.
 
 The motor is held into place using zip ties.
 
@@ -123,6 +122,14 @@ This all seems to work - at least for testing purposes.  You might have better /
 A shell option without a built-in weapon is provided.  Building the robot without a weapon is a good way to test with reduced "drama."
 
 This shell includes a mounting hole so that a weapon may be attached later using a peg.  No assurances are given about the robustness of this approach.  Using hot-glue to re-enforce weapon attachment may prove useful.
+
+<table><tr><td>
+<img src="../media/weapon_on.png" alt="drawing" width="380"/></td><td>
+
+<img src="../media/weapon_off.png" alt="drawing" width="380"/></td>
+</tr>
+</table>
+
 
 ## Motor 
 A 45-turn 540-sized "sealed endbell" hobby motor is used.  [Injora](https://www.amazon.com/INJORA-Brushed-Tracks-AXI03007-Parts%EF%BC%8845T%EF%BC%89/dp/B08X21JCGZ/?th=1) is one of many common brands.
@@ -193,13 +200,17 @@ One solution is to just replace the motor when it gets worn-out.  At about $15 -
 
 A modification that seems to help with this problem is placing a 3.2mm plastic washer on the rear-end of the shaft - and then soldering a metal 3.2mm washer on top of it to sandwich it in place.
 
-A high temperature soldering gun and use of flux will help assure a good solder bond is quickly made - and reduce the chance of completely melting the plastic washer.
-
-These parts were sourced from an already damaged 540 motor.
-
 <div align="center">
 <img src="../media/motor_hack.jpg" alt="drawing" width="400"/>
 <p>Motor with soldered retaining washer / plastic glide washer</p>
 </div>
+
+A high temperature soldering gun and use of flux will help assure a good solder bond is quickly made - and reduce the chance of completely melting the plastic washer.
+
+For the test build these parts were sourced from an already damaged 540 motor.
+
+These parts from McMaster Carr have not been tested - but may provide similar functionality:  
+[https://www.mcmaster.com/95395A104/](https://www.mcmaster.com/95395A104/)  
+[https://www.mcmaster.com/93785A821/](https://www.mcmaster.com/93785A821/)
 
 
