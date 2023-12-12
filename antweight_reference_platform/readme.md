@@ -210,6 +210,19 @@ The voltage monitor is optional - but a good idea to avoid over-discharging your
 See BATTERY\_ALERT\_ENABLED and BATTERY\_ADC\_WARN\_VOLTAGE\_THRESHOLD in [melty_config.h](../openmelt/melty_config.h) for options.
 
 
+## Deploying Firmware
+
+Get the latest version of the [Arduino IDE](https://www.arduino.cc/en/software).
+
+You will need to also download and install the [Adafruit SleepyDog](https://github.com/adafruit/Adafruit_SleepyDog) and [SparkFun_LIS331](https://github.com/sparkfun/SparkFun_LIS331_Arduino_Library) libraries.
+
+Select board type as "Arduino Micro" - and you should be ready to deploy the firmware.
+
+The constants in [melty_config.h](../openmelt/melty_config.h) are intended to reflect the test platform - so the interactive configuration process should be fairly smooth.
+
+<div align="center"><img src="../media/programming.jpg" alt="drawing" width="380"/></div>
+
+
 ## Optional Motor Modification
 
 A 1-wheel robot results in a constant pulling force on the motor as it rotates.  This will cause the motor shaft to become loose over time (specifically - there is an internal shim on the shaft that slips).  These motors tend to still run - but are noisy, slower and less efficient.
