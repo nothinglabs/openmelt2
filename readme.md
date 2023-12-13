@@ -64,6 +64,12 @@ Robots with lower ground clearance seem to experience this problem less.  The an
 
 2 wheel designs seem less prone to these issues (but are slightly less cool looking).
 
+
+
+https://github.com/nothinglabs/openmelt2/assets/3834997/6260f55a-6395-46f6-a2f1-cd301056c252
+
+
+
 ## Accelerometer Placement
 The accelerometer must be positioned so that it experiences no more than 400g at the robot's anticipated max rotation speed. A [centrifuge calculator](https://druckerdiagnostics.com/g-force-calculator/) may be used to determine this.
 
