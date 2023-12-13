@@ -25,6 +25,12 @@ Open Melt was developed by developed by Rich Olson ([nothinglabs.com](http://www
 
 #### For a complete parts list, 3d print files and build notes see the [antweight reference platform](./antweight_reference_platform/).
 
+## Demo Video
+
+https://github.com/nothinglabs/openmelt2/assets/3834997/7247756d-c1fe-4b85-9fc3-9274c0709dcb
+
+
+
 
 ## General Hardware Requirements
 
