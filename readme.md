@@ -41,6 +41,8 @@ https://github.com/nothinglabs/openmelt2/assets/3834997/7247756d-c1fe-4b85-9fc3-
 - Motor Driver(s)
 - Motor(s)
 
+Use of an **Atmega328-based Arduino is not supported** due to lack of adequate interrupt pins.
+
 The HSLI311 is a 3v part - but the Adafruit breakout includes a 3v<->5v level converter to make interfacing with the Arduino easy.  Alternatively, [Sparkfun's H3LIS331DL Breakout](https://www.sparkfun.com/products/14480) has been verified to work when used in conjunction with the [SparkFun 3v<->5v Logic Level Converter](https://www.sparkfun.com/products/12009).
 
 ## 1 vs. 2 Wheels
@@ -202,13 +204,13 @@ Entering / exiting config mode will cause this number to be reset to 0.
 ## Arduino Notes
 This project uses both the "RX" and "TX" (pins 0 and 1) on the Arduino.  With Atmega32u4 Arduinos this does not interfere with programming.
 
-Open Melt uses the [Adafruit SleepyDog](https://github.com/adafruit/Adafruit_SleepyDog) to implement a watchdog timer.
+Open Melt uses the [Adafruit SleepyDog](https://github.com/adafruit/Adafruit_SleepyDog) to implement the watchdog timer.
 
-The [SparkFun_LIS331](https://github.com/sparkfun/SparkFun_LIS331_Arduino_Library) library is used to interface to the H3LIS331 accelerometer.
+The [SparkFun\_LIS331](https://github.com/sparkfun/SparkFun_LIS331_Arduino_Library) library is used to interface with the H3LIS331 accelerometer.  This library seems to not deal with all I2C failures gracefully - and appeared to be the causes of a hang / run-away in one prototype which was determined to have an I2C wiring issue.  Modifying the library to implement [setWireTimeout](https://www.arduino.cc/reference/en/language/functions/communication/wire/setwiretimeout/) might address this specific issue.  The watchdog timer was implemented to deal with this and any similar issues.
 
-Versions of both libraries last verified to work with Open Melt are archived in the arduino_library_archives folder.
+Versions of both libraries last verified to work with Open Melt are archived in the arduino\_library\_archives folder.
 
-Use of an **Atmega328-based Arduino is not supported** due to lack of adequate interrupt pins.
+A significant power glitch could cause the Arduino Micro to go into a 7-second delay on reboot waiting to be programmed.  In a combat robot event - this could certainly result in a lost fight.  It should be possible to address this issue by [bypassing the bootloader and burning the sketch directly]([https://docs.arduino.cc/hacking/software/Programmer]) (this has not been tested).
 
 Open Melt has not been tested on non-AVR Arduinos - but may work with some minor limitations.  See [melty_config.h](openmelt/melty_config.h) for details.
 
