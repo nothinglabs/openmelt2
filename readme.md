@@ -50,25 +50,13 @@ Open Melt generates signals for 2 motors independent of how many are connected. 
 
 <div align="center">
 <table class="center"><tr><td>
-<img src="./media/low_spin.gif" alt="drawing" width="250"/></td>
-<td><img src="./media/bounce.gif" alt="drawing" width="200"/></td>
+<img src="./media/low_spin.gif" alt="drawing" width="350"/></td>
 
-<td><img src="./media/mbfinal.jpg" alt="drawing" width="200"/></td>
+<td><img src="./media/mbfinal.jpg" alt="drawing" width="300"/></td>
 </td></tr></table></div>
 
 In a 1 wheel robot - the unsupported end scrapes the ground during spin-up - but then levitates when it reaches speed.  
 
-In some 1 wheel robots - oscillation / bouncing has been observed at higher speeds - which can reduce translational control.  This phenomena is not fully understood - but may be caused by too-soft wheels deforming / shifting off the center of the hub.  Conversely - harder wheels may cause this problem when they bounce off imperfections in the floor.  
-
-Oscillation may also be a function of some kind of resonance effect.
-
-Robots with lower ground clearance seem to experience this problem less.  The antweight reference platform is fairly stable up to about 2800rpm.
-
-2 wheel designs seem less prone to these issues (but are slightly less cool looking).
-
-
-
-https://github.com/nothinglabs/openmelt2/assets/3834997/6260f55a-6395-46f6-a2f1-cd301056c252
 
 
 
@@ -144,7 +132,7 @@ If no RC updates are received on the throttle channel for ~1 second - the robot 
 
 It should be noted that MOSFET drivers can fail in a "closed" state.  This means that they will drive the motor until the battery runs out.
 
-## Tutorial Video
+## Setup Tutorial Video
 
 https://github.com/nothinglabs/openmelt2/assets/3834997/2dc84804-ed5a-4955-8e00-1ae2ac9f0f43
 
@@ -205,6 +193,21 @@ This the same shimmering effect used in configuration mode.  To avoid confusion 
 While spun-down - push the control stick forward for ~1 second.  This will cause the robot to flash out the highest RPM observed in multiples of 100.  For example 23 flashes = 2300rpm.
 
 Entering / exiting config mode will cause this number to be reset to 0.
+
+
+## 1 Wheel Stability Challenges
+
+<div align="center"><img src="./media/bounce.gif" alt="drawing" width="300"/></div>
+
+In some 1 wheel robots - oscillation / bouncing has been observed at higher speeds - which can reduce translational control. This phenomena is not fully understood - but may be caused by too-soft wheels deforming / shifting off the center of the hub. Conversely - harder wheels may cause this problem when they bounce off imperfections in the floor.
+
+2 wheel designs seem less prone to these issues (but are slightly less cool looking).
+
+Robots with lower ground clearance seem to experience this problem less.  The antweight reference platform is fairly stable up to about 2800rpm.
+
+Some examples / more speculation on causes in this video:
+
+https://github.com/nothinglabs/openmelt2/assets/3834997/6260f55a-6395-46f6-a2f1-cd301056c252
 
 
 ## Arduino Notes
