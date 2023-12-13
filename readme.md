@@ -221,6 +221,6 @@ Note: Connecting the Arduino to USB may put it in an unexpected state - **which 
 
 ***
 
-#### For Open Melt version 1 (obsolete!) - [see here](https://github.com/nothinglabs/openmelt).
+#### For Open Melt version 1 (obsolete!) - [see here](http://www.nothinglabs.com/openmelt_legacy/).
 
  

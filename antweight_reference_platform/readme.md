@@ -153,7 +153,7 @@ The [7.4v 900mAh battery](https://www.amazon.com/dp/B09BYVNH2N?psc=1&ref=ppx_yo2
 
 Runtime on a full battery charge is over 6 minutes.  A somewhat smaller battery could probably be used.
 
-Upgrading to a 11.1v battery may be possible - but could be too much for the MOSFET to handle.
+Upgrading to a 11.1v battery may be possible - but some preliminary tests suggested it may be too much for the MOSFET to handle.
 
 ## Schematic
 
