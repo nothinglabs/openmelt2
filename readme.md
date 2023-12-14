@@ -21,7 +21,7 @@ It has been tested up to 3200rpm - and can likely work at significantly higher s
 
 Version 2 of the project is a complete recode (previously native Atmega/AVR).  The move to Arduino was done to make it more accessible and potentially portable to non-AVR platforms.
 
-Open Melt was developed by developed by Rich Olson ([nothinglabs.com](http://www.nothinglabs.com)) and is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.  
+Open Melt was developed by Rich Olson ([nothinglabs.com](http://www.nothinglabs.com)) and is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.  
 
 #### For a complete parts list, 3d print files and build notes see the [antweight reference platform](./antweight_reference_platform/).
 
