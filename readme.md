@@ -209,6 +209,10 @@ Some examples / more speculation on causes in this video:
 
 https://github.com/nothinglabs/openmelt2/assets/3834997/6260f55a-6395-46f6-a2f1-cd301056c252
 
+## Motor Timing Video
+This video attempts to demonstrate motor power timing relative to the direction of translation.  It is not entirely intuitive.
+
+https://github.com/nothinglabs/openmelt2/assets/3834997/cda94d4d-d73b-48d2-b551-4b090d01f84a
 
 ## Arduino Notes
 This project uses both the "RX" and "TX" (pins 0 and 1) on the Arduino.  With Atmega32u4 Arduinos this does not interfere with programming.
