@@ -84,9 +84,11 @@ When no forward or back translation is desired - the portion of the rotation tha
 Brushless RC motor controllers that support high-speed 490Hz PWM may work with Open Melt.  A "Hobbypower 30a" brushless controller running the [SimonK firmware](https://github.com/sim-/tgy) has been tested and found to work.  Other controllers running SimonK firmware may also work.
 
 
-## Heading LED
+## Heading LED / Visibility
 
 The heading LED should be installed at a location along the perimeter of the robot where it can be viewed at any angle while being driven.  Open Melt's interactive configuration can adjust for any placement.
+
+A common issue is the robot shell or lid obscuring the LED when viewed from shallow angles (such as across an arena).  Raising the LED, or insetting it from the shell perimeter by just a few millimeters can significantly improve visibility.  
 
 The [Arduino Micro is capable of 20ma per I/O pin](https://store.arduino.cc/products/arduino-micro#:~:text=Each%20pin%20can%20provide%20or,permanent%20damage%20to%20the%20microcontroller) - so a resistor must be used to limit LED current.  The 100ohm resistor in the schematic is a good value for blue LEDs.  Values for other color LEDs may be determined using a [LED Series Resistor Calculator](https://www.digikey.com/en/resources/conversion-calculators/conversion-calculator-led-series-resistor).
 
