@@ -254,13 +254,14 @@ void spin_one_rotation(void) {
   if (cycle_count % 2 == 1) melty_parameter_update_time_offset_us = melty_parameters.rotation_interval_us / 2;  
   bool melty_parameters_updated_this_rotation = false;
 
+
   //loop for one rotation of robot
   while (time_spent_this_rotation_us < melty_parameters.rotation_interval_us) {
 
     //update melty parameters if we haven't / update time has elapsed
     if (melty_parameters_updated_this_rotation == false && time_spent_this_rotation_us > melty_parameter_update_time_offset_us) { 
       melty_parameters = get_melty_parameters();
-      melty_parameters_updated_this_rotation = true;
+      melty_parameters_updated_this_rotation = true;  
     }
 
     //if translation direction is RC_FORBACK_NEUTRAL - robot cycles between forward and reverse translation for net zero translation
