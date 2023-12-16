@@ -174,10 +174,14 @@ Wire wrapping has fallen out-of-fashion - but there is a reason they used this a
 
 If using another wiring method - just keep in mind the high forces this robot will experience.  Temporary "Dupont wire" jumpers are not likely to work reliably.
 
-## Heading LED
+## Heading LED / Visibility
 The heading LED and resistor are hot glued into the upper-left corner of the robot.  
 
-Glue the LED as close to the top of the shell (away from the floor) as possible to assure good visibility.
+Glue the LED close to the top of the shell (away from the floor).
+
+The lid / shell edge can potentially obscure LED visibility.  Mounting the LED so it slightly protrudes above the shell edge (flush with the lid) can help with this.
+
+Be sure to test with the lid on to verify good LED visbility.
 
 Make sure to glue the resistor to a surface so that it doesn't place strain on the LED or wiring.
 
