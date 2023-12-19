@@ -227,7 +227,7 @@ The [SparkFun\_LIS331](https://github.com/sparkfun/SparkFun_LIS331_Arduino_Libra
 
 Versions of both libraries last verified to work with Open Melt are archived in the arduino\_library\_archives folder.
 
-A significant power glitch could cause the Arduino Micro to go into a 7-second delay on reboot waiting to be programmed.  In a combat robot event - this could certainly result in a lost fight.  It should be possible to address this issue by [bypassing the bootloader and burning the sketch directly]([https://docs.arduino.cc/hacking/software/Programmer]) (this has not been tested).
+A significant power glitch could cause the Arduino Micro to go into a 7-second delay on reboot waiting to be programmed.  In a combat robot event - this could certainly result in a lost fight.  It should be possible to address this issue by [bypassing the bootloader and burning the sketch directly](https://docs.arduino.cc/hacking/software/Programmer) (this has not been tested).
 
 Open Melt has not been tested on non-AVR Arduinos - but may work with some minor limitations.  See [melty_config.h](openmelt/melty_config.h) for details.
 
