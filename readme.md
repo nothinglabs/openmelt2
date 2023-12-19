@@ -21,15 +21,15 @@ It has been tested up to 3200rpm - and can likely work at significantly higher s
 
 Version 2 of the project is a complete recode (previously native Atmega/AVR).  The move to Arduino was done to make it more accessible and potentially portable to non-AVR platforms.
 
-Open Melt was developed by Rich Olson ([nothinglabs.com](http://www.nothinglabs.com)) and is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.  
+Open Melt was developed by Rich Olson ([nothinglabs.com](http://www.nothinglabs.com)) and is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.
+
+A longer demo video and some background on Open Melt are available at this [blog post](http://www.nothinglabs.com/open-melt-2/).
 
 #### For a complete parts list, 3d print files and build notes see the [antweight reference platform](./antweight_reference_platform/).
 
 ## Demo Video
 
 https://github.com/nothinglabs/openmelt2/assets/3834997/7247756d-c1fe-4b85-9fc3-9274c0709dcb
-
-A longer demo video and some background on Open Melt are available at this [blog post](http://www.nothinglabs.com/open-melt-2/).
 
 
 ## General Hardware Requirements
@@ -65,7 +65,9 @@ The accelerometer must be positioned so that it experiences no more than 400g at
 
 Open Melt provides an interactive setup routine that makes precise placement or orientation of the accelerometer unnecessary.
 
-Alignment of the accelerometer off-axis will result in a linear error - which has the same effect as reducing the radius of rotation.  The software also corrects for installing the accelerometer 180 degrees rotated.
+Alignment of the accelerometer off-axis will result in a linear error - which has the same effect as reducing the radius of rotation.  Placing will the accerometer at a 45 degree angle will effectively halve its sensitivity.  This may be useful in larger robots.
+
+The software also corrects for installing the accelerometer 180 degrees rotated.
 
 ## Motor Driver(s) / Throttle Control
 
