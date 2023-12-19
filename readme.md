@@ -29,7 +29,7 @@ Open Melt was developed by Rich Olson ([nothinglabs.com](http://www.nothinglabs.
 
 https://github.com/nothinglabs/openmelt2/assets/3834997/7247756d-c1fe-4b85-9fc3-9274c0709dcb
 
-
+A longer demo video and some background on Open Melt are available at this [blog post](http://www.nothinglabs.com/open-melt-2/).
 
 
 ## General Hardware Requirements
