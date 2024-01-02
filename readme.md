@@ -21,15 +21,15 @@ It has been tested up to 3200rpm - and can likely work at significantly higher s
 
 Version 2 of the project is a complete recode (previously native Atmega/AVR).  The move to Arduino was done to make it more accessible and potentially portable to non-AVR platforms.
 
-Open Melt was developed by Rich Olson ([nothinglabs.com](http://www.nothinglabs.com)) and is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.  
+Open Melt was developed by Rich Olson ([nothinglabs.com](http://www.nothinglabs.com)) and is provided under the [Creative Commons Attribution-NonCommercial-ShareAlike](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en) license.
+
+A longer demo video and some background on Open Melt are available at this [blog post](http://www.nothinglabs.com/open-melt-2/).
 
 #### For a complete parts list, 3d print files and build notes see the [antweight reference platform](./antweight_reference_platform/).
 
 ## Demo Video
 
 https://github.com/nothinglabs/openmelt2/assets/3834997/7247756d-c1fe-4b85-9fc3-9274c0709dcb
-
-
 
 
 ## General Hardware Requirements
@@ -65,7 +65,9 @@ The accelerometer must be positioned so that it experiences no more than 400g at
 
 Open Melt provides an interactive setup routine that makes precise placement or orientation of the accelerometer unnecessary.
 
-Alignment of the accelerometer off-axis will result in a linear error - which has the same effect as reducing the radius of rotation.  The software also corrects for installing the accelerometer 180 degrees rotated.
+Alignment of the accelerometer off-axis will result in a linear error - which has the same effect as reducing the radius of rotation.  Placing will the accerometer at a 45 degree angle will effectively halve its sensitivity.  This may be useful in larger robots.
+
+The software also corrects for installing the accelerometer 180 degrees rotated.
 
 ## Motor Driver(s) / Throttle Control
 
@@ -84,9 +86,11 @@ When no forward or back translation is desired - the portion of the rotation tha
 Brushless RC motor controllers that support high-speed 490Hz PWM may work with Open Melt.  A "Hobbypower 30a" brushless controller running the [SimonK firmware](https://github.com/sim-/tgy) has been tested and found to work.  Other controllers running SimonK firmware may also work.
 
 
-## Heading LED
+## Heading LED / Visibility
 
 The heading LED should be installed at a location along the perimeter of the robot where it can be viewed at any angle while being driven.  Open Melt's interactive configuration can adjust for any placement.
+
+A common issue is the robot shell or lid obscuring the LED when viewed from shallow angles (such as across an arena).  Raising the LED, or insetting it from the shell perimeter by just a few millimeters can significantly improve visibility.  
 
 The [Arduino Micro is capable of 20ma per I/O pin](https://store.arduino.cc/products/arduino-micro#:~:text=Each%20pin%20can%20provide%20or,permanent%20damage%20to%20the%20microcontroller) - so a resistor must be used to limit LED current.  The 100ohm resistor in the schematic is a good value for blue LEDs.  Values for other color LEDs may be determined using a [LED Series Resistor Calculator](https://www.digikey.com/en/resources/conversion-calculators/conversion-calculator-led-series-resistor).
 
@@ -223,7 +227,7 @@ The [SparkFun\_LIS331](https://github.com/sparkfun/SparkFun_LIS331_Arduino_Libra
 
 Versions of both libraries last verified to work with Open Melt are archived in the arduino\_library\_archives folder.
 
-A significant power glitch could cause the Arduino Micro to go into a 7-second delay on reboot waiting to be programmed.  In a combat robot event - this could certainly result in a lost fight.  It should be possible to address this issue by [bypassing the bootloader and burning the sketch directly]([https://docs.arduino.cc/hacking/software/Programmer]) (this has not been tested).
+A significant power glitch could cause the Arduino Micro to go into a 7-second delay on reboot waiting to be programmed.  In a combat robot event - this could certainly result in a lost fight.  It should be possible to address this issue by [bypassing the bootloader and burning the sketch directly](https://docs.arduino.cc/hacking/software/Programmer) (this has not been tested).
 
 Open Melt has not been tested on non-AVR Arduinos - but may work with some minor limitations.  See [melty_config.h](openmelt/melty_config.h) for details.
 
