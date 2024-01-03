@@ -106,7 +106,7 @@ The 4700uF capacitor is required across the 5v power bus to assure motor noise d
 
 If using a MOSFET for motor control - an appropriately sized Schottky diode **must** be installed across the motor leads. 
 
-The receiver and accelerometer are powered via the Arduino's 5v regulator (rated 7-12v input).  Practically - this seems to work well enough with either a 7.4 or 11.1v LiPo battery.  For higher voltages - a dedicated voltage regulator should be used.
+The receiver and accelerometer are powered via the Arduino's 5v regulator (rated 7-12v input).  Practically - this seems to work well enough with a 7.4v LiPo battery.  For higher voltages - a dedicated voltage regulator should be used (an 11.1v LiPo has a fully-charged voltage of 12.6v).
 
 <p align="center">
 <img src="./openmelt_schematic/schematic.jpg" alt="drawing" width="700"/>
