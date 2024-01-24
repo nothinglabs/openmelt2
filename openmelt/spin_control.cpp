@@ -71,7 +71,7 @@ int get_max_rpm() {
 
 
 //calculates time for this rotation of robot
-//also steers the robot by increasing/ decreasing by a factor relative to RC left / right position
+//also steers the robot by increasing / decreasing by a factor relative to RC left / right position
 //by having the rotation time intentionally run slighty short or long - heading of robot is effectively changed
 static float get_rotation_interval_ms(int steering_disabled) {
   
@@ -100,9 +100,10 @@ static float get_rotation_interval_ms(int steering_disabled) {
 }
 
 
+//performs changes to melty parameters when in config mode
 static struct melty_parameters_t handle_config_mode(struct melty_parameters_t melty_parameters) {
 
-  //if forback forward - normal drive (testing)
+  //if forback forward - normal drive (for driver testing - no adjustment of mely parameters)
 
   //if forback neutral - then do radius adjustment
   if (melty_parameters.translate_forback == RC_FORBACK_NEUTRAL) {
@@ -155,7 +156,7 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
 
 //Calculates all parameters need for a single rotation
 //Motor timing, LED timing, etc.
-//This entire section takes ~1300us on an Atmega32u4 (acceptable)
+//This entire section takes ~1300us on an Atmega32u4 (acceptable - fast enough to not have major impact on tracking accuracy)
 static struct melty_parameters_t get_melty_parameters(void) {
 
   lock_rc_data();//prevent changes to RC values during calculations
@@ -233,27 +234,22 @@ static struct melty_parameters_t get_melty_parameters(void) {
 //(repeat as needed)
 void spin_one_rotation(void) {
 
-  //initial assignment of melty parameters
+  //-initial- assignment of melty parameters
   static struct melty_parameters_t melty_parameters = get_melty_parameters();
 
-  //capture initial time stamp before rotation start
-  //by starting before the loop - time performing accel sampling / floating point math is included in loop time
+  //capture initial time stamp before rotation start (time performing accel sampling / floating point math is included)
   unsigned long start_time = micros();
+  unsigned long time_spent_this_rotation_us = 0;
 
-  //cycle count is tracked to help handle idling (non-translation)
-  //overflow is non-issue
+  //tracking cycle count is needed to alternate cycles for non-translation (overflow is non-issue)
   static unsigned long cycle_count = 0;
   cycle_count++;
 
-  unsigned long time_spent_this_rotation_us = micros() - start_time;
-
   //the melty parameters are updated either at the beginning of the rotation - or the middle of the rotation (alternating each time)
   //this is done so that any errors due to the ~1ms accel read / math cycle cancel out any effect on tracking / translational drift
-
   int melty_parameter_update_time_offset_us = 0;
   if (cycle_count % 2 == 1) melty_parameter_update_time_offset_us = melty_parameters.rotation_interval_us / 2;  
   bool melty_parameters_updated_this_rotation = false;
-
 
   //loop for one rotation of robot
   while (time_spent_this_rotation_us < melty_parameters.rotation_interval_us) {
@@ -265,21 +261,17 @@ void spin_one_rotation(void) {
     }
 
     //if translation direction is RC_FORBACK_NEUTRAL - robot cycles between forward and reverse translation for net zero translation
-    //if motor 2 (or motor 1) is not present - control sequence remains identical
+    //if motor 2 (or motor 1) is not present - control sequence remains identical (signal still generated for non-connected motor)
 
     //handle translating forwards
     if (melty_parameters.translate_forback == RC_FORBACK_FORWARD || (melty_parameters.translate_forback == RC_FORBACK_NEUTRAL && cycle_count % 2 == 0)) {
       if (time_spent_this_rotation_us >= melty_parameters.motor_start1 && time_spent_this_rotation_us <= melty_parameters.motor_stop1) {
-
         motor_1_on(melty_parameters.throttle_percent);
-
       } else {
         motor_1_coast();
       }
-      if (time_spent_this_rotation_us >= melty_parameters.motor_start2 || time_spent_this_rotation_us <= melty_parameters.motor_stop2) {
-        
+      if (time_spent_this_rotation_us >= melty_parameters.motor_start2 || time_spent_this_rotation_us <= melty_parameters.motor_stop2) {        
         motor_2_on(melty_parameters.throttle_percent);
-
       } else {
         motor_2_coast();
       }
@@ -314,7 +306,6 @@ void spin_one_rotation(void) {
       }
     }
 
-    //just updating at end of loop to assure same value used for all evaluations
     time_spent_this_rotation_us = micros() - start_time;
   }
 
