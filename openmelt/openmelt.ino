@@ -111,7 +111,7 @@ void display_rpm_if_requested() {
 
 void check_config_mode() {
   
-  //if user pulls control stick back for 750ms - enters interactive configuration mode
+  //if user pulls control stick back for 750ms - enters (or exits) interactive configuration mode
   if (rc_get_forback() == RC_FORBACK_BACKWARD) {
     delay(750);
     if (rc_get_forback() == RC_FORBACK_BACKWARD) {

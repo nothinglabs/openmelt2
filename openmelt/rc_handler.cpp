@@ -79,10 +79,14 @@ void update_rc_channel(struct rc_channel_t *rc_channel) {
 //recent that MAX_MS_BETWEEN_RC_UPDATES
 int rc_signal_is_healthy() {
   
+  lock_rc_data();
+  unsigned long last_good_signal = throttle_rc_channel.last_good_signal;
+  unlock_rc_data();
+  
   //initial signal not received
-  if (throttle_rc_channel.last_good_signal == 0) return RC_SIGNAL_BAD;
+  if (last_good_signal == 0) return RC_SIGNAL_BAD;
 
-  if (millis() - throttle_rc_channel.last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
+  if (millis() - last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
   
   return RC_SIGNAL_GOOD;
 }
@@ -91,10 +95,15 @@ int rc_signal_is_healthy() {
 //default values are intended to have "dead zones" at both top
 //and bottom of stick for 0 and 100 percent
 int rc_get_throttle_percent() {
-  if (throttle_rc_channel.pulse_length >= FULL_THROTTLE_PULSE_LENGTH) return 100;
-  if (throttle_rc_channel.pulse_length <= IDLE_THROTTLE_PULSE_LENGTH) return 0;
 
-  long throttle_percent = (throttle_rc_channel.pulse_length - IDLE_THROTTLE_PULSE_LENGTH) * 100;
+  lock_rc_data();
+  unsigned long pulse_length = throttle_rc_channel.pulse_length;
+  unlock_rc_data();
+
+  if (pulse_length >= FULL_THROTTLE_PULSE_LENGTH) return 100;
+  if (pulse_length <= IDLE_THROTTLE_PULSE_LENGTH) return 0;
+
+  long throttle_percent = (pulse_length - IDLE_THROTTLE_PULSE_LENGTH) * 100;
   throttle_percent = throttle_percent / (FULL_THROTTLE_PULSE_LENGTH - IDLE_THROTTLE_PULSE_LENGTH);
   return (int)throttle_percent;
 }
@@ -112,7 +121,12 @@ int rc_get_is_lr_in_normal_deadzone() {
 
 //returns RC_FORBACK_FORWARD, RC_FORBACK_BACKWARD or RC_FORBACK_NEUTRAL based on stick position
 int rc_get_forback() {
-  int rc_forback_offset = forback_rc_channel.pulse_length - CENTER_FORBACK_PULSE_LENGTH;
+  
+  lock_rc_data();
+  unsigned long pulse_length = forback_rc_channel.pulse_length;
+  unlock_rc_data();
+
+  int rc_forback_offset = pulse_length - CENTER_FORBACK_PULSE_LENGTH;
   if (rc_forback_offset > FORBACK_MIN_THRESH_PULSE_LENGTH) return RC_FORBACK_FORWARD;
   if (rc_forback_offset < (FORBACK_MIN_THRESH_PULSE_LENGTH * -1)) return RC_FORBACK_BACKWARD;
   return RC_FORBACK_NEUTRAL;
@@ -122,7 +136,12 @@ int rc_get_forback() {
 //0 for hypothetical perfect center (reality is probably +/-50)
 //returns negative value for left / positive value for right
 int rc_get_leftright() {
-  return leftright_rc_channel.pulse_length - CENTER_LEFTRIGHT_PULSE_LENGTH;
+  
+  lock_rc_data();
+  unsigned long pulse_length = leftright_rc_channel.pulse_length;
+  unlock_rc_data();
+
+  return pulse_length - CENTER_LEFTRIGHT_PULSE_LENGTH;
 }
 
 //ISRs for each RC interrupt pin

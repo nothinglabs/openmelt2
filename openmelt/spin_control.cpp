@@ -159,8 +159,6 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
 //This entire section takes ~1300us on an Atmega32u4 (acceptable - fast enough to not have major impact on tracking accuracy)
 static struct melty_parameters_t get_melty_parameters(void) {
 
-  lock_rc_data();//prevent changes to RC values during calculations
-
   struct melty_parameters_t melty_parameters = {};
 
   float led_offset_portion = led_offset_percent / 100.0f;
@@ -224,8 +222,6 @@ static struct melty_parameters_t get_melty_parameters(void) {
 #ifdef BATTERY_ALERT_ENABLED
   if (battery_voltage_low() == 1) melty_parameters.led_shimmer = 1;
 #endif
-
-  unlock_rc_data();   
 
   return melty_parameters;
 }

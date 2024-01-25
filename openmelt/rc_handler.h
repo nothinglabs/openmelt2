@@ -54,6 +54,3 @@ int rc_get_leftright();
 
 int rc_get_is_lr_in_config_deadzone();
 int rc_get_is_lr_in_normal_deadzone();
-
-void lock_rc_data();
-void unlock_rc_data();
