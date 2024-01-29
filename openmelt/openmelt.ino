@@ -21,7 +21,7 @@ void service_watchdog() {
 
 //loops until a good RC signal is detected and throttle is zero (assures safe start)
 static void wait_for_rc_good_and_zero_throttle() {
-    while (rc_signal_is_healthy() != RC_SIGNAL_GOOD || rc_get_throttle_percent() > 0) {
+    while (rc_signal_is_healthy() == false || rc_get_throttle_percent() > 0) {
       
       //"slow on/off" for LED while waiting for signal
       heading_led_on(0); delay(250);
@@ -121,7 +121,7 @@ static void check_config_mode() {
     delay(750);
     if (rc_get_forback() == RC_FORBACK_BACKWARD) {
       toggle_config_mode(); 
-      if (get_config_mode() == 0) save_melty_config_settings();    //save melty settings on config mode exit
+      if (get_config_mode() == false) save_melty_config_settings();    //save melty settings on config mode exit
       
       //wait for user to release stick - so we don't re-toggle modes
       while (rc_get_forback() == RC_FORBACK_BACKWARD) {
@@ -141,7 +141,7 @@ static void handle_bot_idle() {
     heading_led_off(); delay(120);
 
     //if in config mode blip LED again to show "double-flash" 
-    if (get_config_mode() == 1) {
+    if (get_config_mode() == true) {
       heading_led_off(); delay(400);
       heading_led_on(0); delay(30);
       heading_led_off(); delay(140);
@@ -160,7 +160,7 @@ void loop() {
 
   //if the rc signal isn't good - assure motors off - and "slow flash" LED
   //this will interrupt a spun-up bot if the signal becomes bad
-  while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
+  while (rc_signal_is_healthy() == false) {
     motors_off();
     
     heading_led_on(0); delay(30);

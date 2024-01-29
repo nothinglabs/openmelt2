@@ -77,18 +77,18 @@ static void update_rc_channel(struct rc_channel_t *rc_channel) {
 
 //verifies RC channels have returned values more
 //recent that MAX_MS_BETWEEN_RC_UPDATES
-int rc_signal_is_healthy() {
+bool rc_signal_is_healthy() {
   
   lock_rc_data();
   unsigned long last_good_signal = throttle_rc_channel.last_good_signal;
   unlock_rc_data();
   
   //initial signal not received
-  if (last_good_signal == 0) return RC_SIGNAL_BAD;
+  if (last_good_signal == 0) return false;
 
-  if (millis() - last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return RC_SIGNAL_BAD;
+  if (millis() - last_good_signal > MAX_MS_BETWEEN_RC_UPDATES) return false;
   
-  return RC_SIGNAL_GOOD;
+  return true;
 }
 
 //returns at integer from 0 to 100 based on throttle position
@@ -108,19 +108,19 @@ int rc_get_throttle_percent() {
   return (int)throttle_percent;
 }
 
-int rc_get_is_lr_in_config_deadzone() {
-  if (abs(rc_get_leftright()) < LR_CONFIG_MODE_DEADZONE_WIDTH) return RC_LR_IN_DEADZONE;
-  return RC_LR_NOT_IN_DEADZONE;
+bool rc_get_is_lr_in_config_deadzone() {
+  if (abs(rc_get_leftright()) < LR_CONFIG_MODE_DEADZONE_WIDTH) return true;
+  return false;
 }
 
-int rc_get_is_lr_in_normal_deadzone() {
-  if (abs(rc_get_leftright()) < LR_NORMAL_DEADZONE_WIDTH) return RC_LR_IN_DEADZONE;
-  return RC_LR_NOT_IN_DEADZONE;
+bool rc_get_is_lr_in_normal_deadzone() {
+  if (abs(rc_get_leftright()) < LR_NORMAL_DEADZONE_WIDTH) return true;
+  return false;
 }
 
 
 //returns RC_FORBACK_FORWARD, RC_FORBACK_BACKWARD or RC_FORBACK_NEUTRAL based on stick position
-int rc_get_forback() {
+rc_forback rc_get_forback() {
   
   lock_rc_data();
   unsigned long pulse_length = forback_rc_channel.pulse_length;

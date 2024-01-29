@@ -1,15 +1,23 @@
+
+//used to return forward / back control stick position
+typedef enum {
+    RC_FORBACK_FORWARD = 1,     //control stick pushed forward
+    RC_FORBACK_NEUTRAL = 0,     //control stick neutral
+    RC_FORBACK_BACKWARD = -1     //control stick held back
+} rc_forback;
+
 void init_rc();
 
-int rc_signal_is_healthy();           //return RC_SIGNAL_GOOD if RC signal looks good
+bool rc_signal_is_healthy();           //return true if RC signal looks good
 
-int rc_get_throttle_percent();        //returns 0-100 value indicating throttle
+int rc_get_throttle_percent();        //returns 0-100 value indicating throttle level
 
-int rc_get_forback();                 //returns RC_FORBACK_FORWARD, RC_FORBACK_NEUTRAL or RC_FORBACK_BACKWARD depending on stick position
+rc_forback rc_get_forback();          //returns RC_FORBACK_FORWARD, RC_FORBACK_NEUTRAL or RC_FORBACK_BACKWARD depending on stick position
 int rc_get_leftright();               //returns offset in microseconds from center value (not converted to percentage)
 
-//these functions return RC_LR_IN_DEADZONE if L/R stick movement is below defined thresholds
-int rc_get_is_lr_in_config_deadzone();  
-int rc_get_is_lr_in_normal_deadzone();
+//these functions return true if L/R stick movement is below defined thresholds
+bool rc_get_is_lr_in_config_deadzone();  
+bool rc_get_is_lr_in_normal_deadzone();
 
 //All pulse lengths in microseconds
 //it's accepted that a TX with fully centered trims may produce values somewhat off these numbers
@@ -35,13 +43,5 @@ int rc_get_is_lr_in_normal_deadzone();
 
 #define MAX_MS_BETWEEN_RC_UPDATES 900             //if we don't get a valid RC update on the throttle at least this often - spin down
 
-#define RC_FORBACK_FORWARD 1
-#define RC_FORBACK_NEUTRAL 0
-#define RC_FORBACK_BACKWARD -1
 
-#define RC_SIGNAL_GOOD 1
-#define RC_SIGNAL_BAD 0
-
-#define RC_LR_IN_DEADZONE 1
-#define RC_LR_NOT_IN_DEADZONE 0
 

@@ -16,7 +16,7 @@ int battery_voltage_low(){
   } else {
     low_bat_count = 0;
   }
-  if (low_bat_count > LOW_BAT_REPEAT_READS_BEFORE_ALARM) return 1;
-  return 0;
+  if (low_bat_count > LOW_BAT_REPEAT_READS_BEFORE_ALARM) return true;
+  return false;
 }
 

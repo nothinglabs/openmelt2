@@ -23,7 +23,7 @@ static float accel_zero_g_offset = DEFAULT_ACCEL_ZERO_G_OFFSET;
 static float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;         //stored in EEPROM as an INT - but handled as a float for configuration purposes
 
 static unsigned int highest_rpm = 0;
-static int config_mode = 0;   //1 if we are in config mode
+static bool config_mode = false;   //1 if we are in config mode
 
 //loads settings from EEPROM
 void load_melty_config_settings() {
@@ -56,13 +56,13 @@ void toggle_config_mode() {
   config_mode = !config_mode;
 
   //on entering config mode - update the zero g offset
-  if (config_mode == 1) update_accel_zero_g_offset();
+  if (config_mode) update_accel_zero_g_offset();
   
   //enterring or exiting config mode also resets highest observed RPM
   highest_rpm = 0;
 }
 
-int get_config_mode() {
+bool get_config_mode() {
   return config_mode;
 }
 
@@ -78,7 +78,7 @@ static float get_rotation_interval_ms(int steering_disabled) {
   float radius_adjustment_factor = 0;
 
   //don't adjust steering if disabled by config mode - or we are in RC deadzone
-  if (steering_disabled == 0 && rc_get_is_lr_in_normal_deadzone() != RC_LR_IN_DEADZONE) {
+  if (steering_disabled == 0 && rc_get_is_lr_in_normal_deadzone() == false) {
     radius_adjustment_factor = (float)(rc_get_leftright() / (float)NOMINAL_PULSE_RANGE) / LEFT_RIGHT_HEADING_CONTROL_DIVISOR;
   }
   
@@ -112,7 +112,7 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
     melty_parameters.steering_disabled = 1;
 
     //only adjust if stick is outside deadzone    
-    if (rc_get_is_lr_in_config_deadzone() != RC_LR_IN_DEADZONE) {
+    if (rc_get_is_lr_in_config_deadzone() == false) {
       //show that we are changing config
       melty_parameters.led_shimmer = 1;
 
@@ -129,11 +129,9 @@ static struct melty_parameters_t handle_config_mode(struct melty_parameters_t me
     
     //LED heading offset adjustment overrides steering
     melty_parameters.steering_disabled = 1;
-    //prevent reverse translation
-    //melty_parameters.translate_forback = RC_FORBACK_NEUTRAL;
     
     //only adjust if stick is outside deadzone  
-    if (rc_get_is_lr_in_config_deadzone() != RC_LR_IN_DEADZONE) {
+    if (rc_get_is_lr_in_config_deadzone() == false) {
 
       //disable translation if adjusting heading
       melty_parameters.translate_forback = RC_FORBACK_NEUTRAL;
@@ -180,7 +178,7 @@ static struct melty_parameters_t get_melty_parameters(void) {
   melty_parameters.translate_forback = rc_get_forback();
 
   //if we are in config mode - handle it (and disable steering if needed)
-  if (get_config_mode() == 1) {
+  if (get_config_mode() == true) {
     melty_parameters = handle_config_mode(melty_parameters);
   }
 
@@ -223,7 +221,7 @@ static struct melty_parameters_t get_melty_parameters(void) {
 
   //if the battery voltage is low - shimmer the LED to let user know
 #ifdef BATTERY_ALERT_ENABLED
-  if (battery_voltage_low() == 1) melty_parameters.led_shimmer = 1;
+  if (battery_voltage_low() == true) melty_parameters.led_shimmer = 1;
 #endif
 
   return melty_parameters;
