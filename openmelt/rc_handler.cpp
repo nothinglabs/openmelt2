@@ -17,21 +17,21 @@ struct rc_channel_t {
   unsigned long last_good_signal; //time stamp (MS) of when last pulse of valid length was received
 };
 
-struct rc_channel_t forback_rc_channel = {
+static struct rc_channel_t forback_rc_channel = {
   .pin = FORBACK_RC_CHANNEL_PIN,
   .pulse_length = MIN_RC_PULSE_LENGTH,
   .pulse_start_time = 0,
   .last_good_signal = 0
 };
 
-struct rc_channel_t leftright_rc_channel = {
+static struct rc_channel_t leftright_rc_channel = {
   .pin = LEFTRIGHT_RC_CHANNEL_PIN,
   .pulse_length = MIN_RC_PULSE_LENGTH,
   .pulse_start_time = 0,
   .last_good_signal = 0
 };
 
-struct rc_channel_t throttle_rc_channel = {
+static struct rc_channel_t throttle_rc_channel = {
   .pin = THROTTLE_RC_CHANNEL_PIN,
   .pulse_length = MIN_RC_PULSE_LENGTH,
   .pulse_start_time = 0,
