@@ -46,7 +46,6 @@ void motor_coast(int motor_pin) {
 
 void motor_1_coast() {
   motor_coast(MOTOR_PIN1);
-
 }
 
 void motor_2_coast() {

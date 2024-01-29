@@ -39,16 +39,16 @@ struct rc_channel_t throttle_rc_channel = {
 };
 
 //prevent RC data from changing when in use
-void lock_rc_data() {
+static void lock_rc_data() {
   rc_data_lock_state = RC_DATA_LOCKED;
 }
 
-void unlock_rc_data() {
+static void unlock_rc_data() {
   rc_data_lock_state = RC_DATA_UNLOCKED;
 }
 
 //updates RC channels with latest values
-void update_rc_channel(struct rc_channel_t *rc_channel) {
+static void update_rc_channel(struct rc_channel_t *rc_channel) {
 
 //if we are using the rc channel info - don't update it!
 

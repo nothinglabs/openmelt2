@@ -1,3 +1,5 @@
+//See melty_config.h for configuration parameters
+
 #include "rc_handler.h"
 #include "melty_config.h"
 #include "motor_driver.h"
@@ -6,7 +8,6 @@
 #include "config_storage.h"
 #include "led_driver.h"
 #include "battery_monitor.h"
-
 
 #ifdef ENABLE_WATCHDOG
 #include <Adafruit_SleepyDog.h>
@@ -18,7 +19,8 @@ void service_watchdog() {
 #endif
 }
 
-void wait_for_rc_good_and_zero_throttle() {
+//loops until a good RC signal is detected and throttle is zero (assures safe start)
+static void wait_for_rc_good_and_zero_throttle() {
     while (rc_signal_is_healthy() != RC_SIGNAL_GOOD || rc_get_throttle_percent() > 0) {
       
       //"slow on/off" for LED while waiting for signal
@@ -32,6 +34,7 @@ void wait_for_rc_good_and_zero_throttle() {
 }
   
 
+//Arduino initial setup function
 void setup() {
   
   Serial.begin(115200);
@@ -53,6 +56,7 @@ void setup() {
   load_melty_config_settings();
 #endif
 
+//if JUST_DO_DIAGNOSTIC_LOOP - then we just loop and display debug info via USB (good for testing)
 #ifdef JUST_DO_DIAGNOSTIC_LOOP
   while (1) {
     service_watchdog();
@@ -70,7 +74,7 @@ void setup() {
 }
 
 //dumps out diagnostics info
-void echo_diagnostics() {
+static void echo_diagnostics() {
 
   Serial.print("Raw Accel G: "); Serial.print(get_accel_force_g());
   Serial.print("  RC Health: "); Serial.print(rc_signal_is_healthy());
@@ -91,8 +95,9 @@ void echo_diagnostics() {
 
 }
 
-void display_rpm_if_requested() {
-//if user pushes control stick up / holds for 750ms - flashes out top speed (100's of RPMs)
+//Used to flash out max recorded RPM 100's of RPMs
+static void display_rpm_if_requested() {
+  //triggered by user pushing throttle up while bot is at idle for 750ms
   if (rc_get_forback() == RC_FORBACK_FORWARD) {
     delay(750);
      //verify throttle at zero to prevent accidental entry into RPM flash
@@ -109,8 +114,8 @@ void display_rpm_if_requested() {
   }
 }
 
-void check_config_mode() {
-  
+//checks if user has requested to enter / exit config mode
+static void check_config_mode() {
   //if user pulls control stick back for 750ms - enters (or exits) interactive configuration mode
   if (rc_get_forback() == RC_FORBACK_BACKWARD) {
     delay(750);
@@ -127,16 +132,15 @@ void check_config_mode() {
 }
 
 //handles the bot when not spinning (with RC good)
-void handle_bot_idle() {
+static void handle_bot_idle() {
 
-    //assure motors are off
-    motors_off();
+    motors_off();               //assure motors are off
     
     //normal LED "fast flash" - indicates RC signal is good while sitting idle
     heading_led_on(0); delay(30);
     heading_led_off(); delay(120);
 
-    //If in config mode blip LED again to show "double-flash" 
+    //if in config mode blip LED again to show "double-flash" 
     if (get_config_mode() == 1) {
       heading_led_off(); delay(400);
       heading_led_on(0); delay(30);
@@ -144,19 +148,18 @@ void handle_bot_idle() {
     }
 
     check_config_mode();          //check if user requests we enter / exit config mode
-    display_rpm_if_requested();
+    display_rpm_if_requested();   //flashed out RPM if user has requested
 
-    //echo diagnostics if bot is idle
-    echo_diagnostics();
+    echo_diagnostics();           //echo diagnostics if bot is idle
 }
 
 //main control loop
 void loop() {
 
-  service_watchdog();
+  service_watchdog();             //keep the watchdog happy
 
-//if the rc signal isn't good - assure motors off - and "slow flash" LED
-//this will interrupt a spun-up bot if the signal becomes bad
+  //if the rc signal isn't good - assure motors off - and "slow flash" LED
+  //this will interrupt a spun-up bot if the signal becomes bad
   while (rc_signal_is_healthy() != RC_SIGNAL_GOOD) {
     motors_off();
     
@@ -170,7 +173,7 @@ void loop() {
 
   //if RC is good - and throtte is above 0 - spin a single rotation
   if (rc_get_throttle_percent() > 0) {
-     //this is where all the motor control happens!  (see spin_control.cpp)
+    //this is where all the motor control happens!  (see spin_control.cpp)
     spin_one_rotation();  
   } else {    
     handle_bot_idle();

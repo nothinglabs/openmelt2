@@ -10,6 +10,7 @@
 
 #ifdef ENABLE_EEPROM_STORAGE
 
+#include <EEPROM.h>
 #include <arduino.h>
 #include "config_storage.h"
 
@@ -34,16 +35,15 @@
 #define EEPROM_ACCEL_OFFSET_BYTE4_LOC 10
 
 
-#include <EEPROM.h>
-
-//indicates values saved to EEPROM
-void write_sentinel() {
+//indicates values saved to EEPROM (doing 2x)
+static void write_sentinel() {
   EEPROM.write(EEPROM_WRITTEN_SENTINEL_BYTE1_LOC, EEPROM_WRITTEN_SENTINEL1_VALUE);
   EEPROM.write(EEPROM_WRITTEN_SENTINEL_BYTE2_LOC, EEPROM_WRITTEN_SENTINEL2_VALUE);
 }
 
-//make sure we actually wrote values before trying to read...
-int check_sentinel() {
+//make sure we actually wrote values before trying to read... (doing 2x)
+//if EEPROM_WRITTEN_SENTINEL_VALUE is changed - will cause EEPROM values to invalidate / use default values 
+static int check_sentinel() {
   if (EEPROM.read(EEPROM_WRITTEN_SENTINEL_BYTE1_LOC) != EEPROM_WRITTEN_SENTINEL1_VALUE) return 0;
   if (EEPROM.read(EEPROM_WRITTEN_SENTINEL_BYTE2_LOC) != EEPROM_WRITTEN_SENTINEL2_VALUE) return 0;
   return 1;
@@ -57,11 +57,13 @@ void save_settings_to_eeprom(int led_offset, float accel_radius, float accel_zer
 }
 
 int load_heading_led_offset() {
+  //if value hasn't been saved previously - return the default
   if (check_sentinel() != 1) return DEFAULT_LED_OFFSET_PERCENT;
   return EEPROM.read(EEPROM_HEADING_LED_LOC);
 }
 
 float load_accel_zero_g_offset() {
+  //if value hasn't been saved previously - return the default
   if (check_sentinel() != 1) return DEFAULT_ACCEL_ZERO_G_OFFSET;
   float accel_zero_g_offset;
   accel_zero_g_offset = EEPROM.get(EEPROM_ACCEL_OFFSET_BYTE1_LOC, accel_zero_g_offset);
@@ -69,6 +71,7 @@ float load_accel_zero_g_offset() {
 }
 
 float load_accel_mount_radius() {
+  //if value hasn't been saved previously - return the default
   if (check_sentinel() != 1) return DEFAULT_ACCEL_MOUNT_RADIUS_CM;
   float accel_radius;
   accel_radius = EEPROM.get(EEPROM_ACCEL_RADIUS_BYTE1_LOC, accel_radius);

@@ -1,3 +1,6 @@
+//This file is intended to include all commonly modified settings for Open Melt
+
+
 #ifndef MELTY_CONFIG_GUARD  //header guard
 #define MELTY_CONFIG_GUARD
 
@@ -86,10 +89,11 @@ enum throttle_modes {
                                                 //0.5f for 0-50% throttle (full PWM_MOTOR_ON used for >50% throttle)
                                                 //1.0f for 0-100% throttle
 
-//----------PWM MOTOR SETTINGS----------
+//----------PWM MOTOR SETTINGS---------- 
+//(only used if a PWM throttle mode is chosen)
 //PWM values are 0-255 duty cycle
 #define PWM_MOTOR_ON 255                        //Motor PWM ON duty cycle (Simonk: 140 seems barely on / 230 seems a good near-full-throttle value)
-#define PWM_MOTOR_COAST 0                     //Motor PWM COAST duty cycle - set to same as PWM_ESC_MOTOR_OFF for fully unpowered (best translation?)
+#define PWM_MOTOR_COAST 0                       //Motor PWM COAST duty cycle - set to same as PWM_ESC_MOTOR_OFF for fully unpowered (best translation?)
 #define PWM_MOTOR_OFF 0                         //Motor PWM OFF duty cycle (Simonk: 100 worked well in testing - if this is too low - ESC may not init)
 
 

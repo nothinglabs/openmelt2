@@ -17,7 +17,6 @@ void heading_led_on(int shimmer) {
     //just turn LED on
      digitalWrite(HEADING_LED_PIN, HIGH);
   }
-  
 }
 
 void heading_led_off() {

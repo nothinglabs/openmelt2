@@ -21,7 +21,7 @@
 
 static float accel_mount_radius_cm = DEFAULT_ACCEL_MOUNT_RADIUS_CM;
 static float accel_zero_g_offset = DEFAULT_ACCEL_ZERO_G_OFFSET;
-static float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;         //stored as in EEPROM as an INT - but handled as a float for configuration purposes
+static float led_offset_percent = DEFAULT_LED_OFFSET_PERCENT;         //stored in EEPROM as an INT - but handled as a float for configuration purposes
 
 static unsigned int highest_rpm = 0;
 static int config_mode = 0;   //1 if we are in config mode
@@ -43,7 +43,7 @@ void save_melty_config_settings() {
 //updated the expected accelerometer reading for 0g 
 //assumes robot is not spinning when config mode is entered
 //value saved to EEPROM on config mode exit
-void update_accel_zero_g_offset(){
+static void update_accel_zero_g_offset(){
   int offset_samples = 200;
   for (int accel_sample_loop = 0; accel_sample_loop < offset_samples; accel_sample_loop ++) {
     accel_zero_g_offset += get_accel_force_g();
@@ -86,9 +86,9 @@ static float get_rotation_interval_ms(int steering_disabled) {
   
   effective_radius_in_cm = effective_radius_in_cm + (effective_radius_in_cm * radius_adjustment_factor);
 
-  //calculate RPM from g's - derived from "G = 0.00001118 * r * RPM^2"
   float rpm;
   //use of absolute makes it so we don't need to worry about accel orientation
+  //calculate RPM from g's - derived from "G = 0.00001118 * r * RPM^2"
   rpm = fabs(get_accel_force_g() - accel_zero_g_offset) * 89445.0f;
   rpm = rpm / effective_radius_in_cm;
   rpm = sqrt(rpm);
@@ -273,7 +273,7 @@ void spin_one_rotation(void) {
       }
     }
 
-    //handle translating backwards
+    //handle translating backwards (motor1 and motor2 timings are swapped - offsetting by 180 degrees)
     if (melty_parameters.translate_forback == RC_FORBACK_BACKWARD || (melty_parameters.translate_forback == RC_FORBACK_NEUTRAL && cycle_count % 2 == 1)) {
       if (time_spent_this_rotation_us >= melty_parameters.motor_start2 || time_spent_this_rotation_us <= melty_parameters.motor_stop2) {
         motor_1_on(melty_parameters.throttle_percent);
